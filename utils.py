@@ -1,7 +1,7 @@
 EMPTY_CELL_CHAR = " "                                        #символ пустой клетки
 VALID_MUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
 VALID_CHARS = (*VALID_MUMBERS,EMPTY_CELL_CHAR)
-_decode_cell_char_ = lambda c: int(c) if c != EMPTY_CELL_CHAR else None  #функция возвращает валидный символ, либо цифру либо None
+_decode_cell_char = lambda c: int(c) if c != EMPTY_CELL_CHAR else None  #функция возвращает валидный символ, либо цифру либо None
 
 def read_grid_from_file(file_path):
     
@@ -9,7 +9,7 @@ def read_grid_from_file(file_path):
         text_all = f.readlines()                                               # считываем все строки в список
     grid_final = []                                                            # итоговый список
     for row in text_all:                                                       # перебор всех считанных строк
-        grid_row = [_decode_cell_char_(char) for char in row if char in VALID_CHARS ]  # если допустимый символ, добавляем его в список
+        grid_row = [_decode_cell_char(char) for char in row if char in VALID_CHARS ]  # если допустимый символ, добавляем его в список
         if len(grid_row) == 9:                                                 # если в списке ровно 9 символов
             grid_final.append(grid_row)                                        # добавляем список в итоговый список
     

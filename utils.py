@@ -1,6 +1,6 @@
-EMPTY_CELL_CHAR = " "                                        #символ пустой клетки
-VALID_MUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
-VALID_CHARS = (*VALID_MUMBERS,EMPTY_CELL_CHAR)
+﻿EMPTY_CELL_CHAR = " "                                        #символ пустой клетки
+VALID_NUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
+VALID_CHARS = (*VALID_NUMBERS,EMPTY_CELL_CHAR)
 _decode_cell_char = lambda c: int(c) if c != EMPTY_CELL_CHAR else None  #функция возвращает валидный символ, либо цифру либо None
 
 def read_grid_from_file(file_path):

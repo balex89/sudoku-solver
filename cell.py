@@ -4,38 +4,41 @@ from collections.abc import Iterable
 class Cell:
 
    
-    def __init__(self,init_value):
-        self.__alternatives  = {i for i in range(1,10) if i!= init_value}                     #  задаем список возможных вариантов, цифры от 1 до 9 за исключением init_value  
-        self.__value = init_value                                                             # задаем текущее значение клетки
-        
- 
-    def exclude(self,exclude_digitals):                                  #исключение цифр из аргумента из множества возможных вариантов
-        if  isinstance(exclude_digitals, Iterable):
-            exclude_set = set(exclude_digitals)
-        elif  isinstance(exclude_digitals, int):
-            exclude_set = {exclude_digitals}
-        else: raise ValueError('Incorrect value')    
-        self.__alternatives.difference_update(exclude_set)                                                           
+    def __init__(self,init_value = None):                                                        # инициализация объекта класса
+        self.__value = init_value                                                                      
+        self.__alternatives  = set() if init_value is not None else {1, 2, 3, 4, 5, 6, 7, 8, 9}    #если init_value число, то множество альтернатив пустое, клетка решена
 
-        
+
+    def __eq__(self, other):                                                      # сравнение объектов класса                       
+        return self.__value == other.__value 
+
+
     @property
     def is_solved(self):
-        if len(self.__alternatives) == 0: 
-            return True
-        else: return False
+        return self.__value is not None
 
 
     @property
     def value(self):
         return self.__value
 
+    
+    def exclude(self,exclude_digitals=set()):                            # исключение цифр из аргумента из множества альтернатив
+        if len(self.__alternatives) > 0  and len(exclude_digitals) :     # что-то делаем, если множество альтернатив не пустое и аргумент  - не пустое множество
+            if  isinstance(exclude_digitals, Iterable):                  # формирем множество для исключения (exclude_set) в зависимоти от аргумента (Iterable или Int)
+                exclude_set = set(exclude_digitals)
+            elif  isinstance(exclude_digitals, int):
+                exclude_set = {exclude_digitals}
+            else: raise ValueError('Incorrect value')
 
-    @value.setter
-    def value(self,new_value):
-        if new_value in self.__alternatives:                                     # если аргумент есть в писке возможных вариантов
-            if self.__value != None:                                             # если текущее значение не None
-                self.__alternatives.add(self.__value)                            # текущее значение добавляем в список возможных вариантов 
-            self.__alternatives.remove(new_value)                                # исключаем новое значение клетки из списка возможных вариантов
-            self.__value = new_value                                             # меняем текущее значение клетки на новое 
-        else: raise ValueError('Incorrect value')
+            result_alternatives = self.__alternatives.difference(exclude_set)                # result_alternatives - разность текущего множества альтернатив и множетсва для исключения   
+
+            if len(result_alternatives) == 0:                                                # если множество альтернатив опустошается до решения:
+                raise Exception('Empty alternatives before solution')                        # вызов исключения
+            else: self.__alternatives =  result_alternatives                                 # если нет, то исключаем из множества альтернатив exclude_set           
+
+            if len(self.__alternatives) == 1 : self.__value = self.__alternatives.pop()      # если после исключения осталась единственная альтернатива - присваиваем оставшееся возможное значение __value , и очищаем множество альтернатив
+
+     
         
+    

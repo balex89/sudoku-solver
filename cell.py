@@ -22,8 +22,14 @@ class Cell:
     def value(self):
         return self.__value
 
+    @value.setter
+    def value(self,new_value):
+        if new_value in self.__alternatives:                                       # если аргумент есть в cписке возможных вариантов
+            self.exclude(self.__alternatives.difference({new_value}))              # исключаем из списка возможных вариантов все, кроме нового значения
+        else: raise ValueError('Incorrect value')
+
     
-    def exclude(self,exclude_digitals=set()):                            # исключение цифр из аргумента из множества альтернатив
+    def exclude(self,exclude_digitals):                                  # исключение цифр из аргумента из множества альтернатив
         if len(self.__alternatives) > 0  and len(exclude_digitals) :     # что-то делаем, если множество альтернатив не пустое и аргумент  - не пустое множество
             if  isinstance(exclude_digitals, Iterable):                  # формирем множество для исключения (exclude_set) в зависимоти от аргумента (Iterable или Int)
                 exclude_set = set(exclude_digitals)
@@ -38,6 +44,9 @@ class Cell:
             else: self.__alternatives =  result_alternatives                                 # если нет, то исключаем из множества альтернатив exclude_set           
 
             if len(self.__alternatives) == 1 : self.__value = self.__alternatives.pop()      # если после исключения осталась единственная альтернатива - присваиваем оставшееся возможное значение __value , и очищаем множество альтернатив
+
+
+
 
      
         

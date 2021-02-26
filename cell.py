@@ -30,7 +30,7 @@ class Cell:
 
     
     def exclude(self,exclude_digitals):                                  # исключение цифр из аргумента из множества альтернатив
-        if len(self.__alternatives) > 0  and len(exclude_digitals) :     # что-то делаем, если множество альтернатив не пустое и аргумент  - не пустое множество
+        if len(self.__alternatives) > 0  and len(exclude_digitals) > 0 :     # что-то делаем, если множество альтернатив не пустое и аргумент  - не пустое множество
             if  isinstance(exclude_digitals, Iterable):                  # формирем множество для исключения (exclude_set) в зависимоти от аргумента (Iterable или Int)
                 exclude_set = set(exclude_digitals)
             elif  isinstance(exclude_digitals, int):

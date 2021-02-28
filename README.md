@@ -1,6 +1,10 @@
 # sudoku-solver
 Solves given classic sudoku puzzle
 
+## Run all tests
+```
+python -m pytest -v
+```
  
 ##Требования к формату файла Sudoku
 

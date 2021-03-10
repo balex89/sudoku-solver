@@ -2,13 +2,12 @@ from cell import Cell
 
 
 class Sudoku:
-    # TODO: implement using cell.Cell()
 
-    def __init__(self):
-        pass
+    def __init__(self, grid):
+        self.__rows = [[Cell(item) for item in row] for row in grid]
 
     def solve(self):
-        pass
+        pass  # TODO: implement
 
     def get_grid(self):
-        return  # grid
+        return [[cell.value for cell in row] for row in self.__rows]

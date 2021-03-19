@@ -17,3 +17,6 @@ class Sudoku:
 
     def get_grid(self):
         return [[cell.value for cell in row] for row in self.__rows]
+
+    def __get_square(self, i, j):
+        return self.__squares[(i//3)*3+j//3]    

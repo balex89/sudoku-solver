@@ -13,7 +13,16 @@ class Sudoku:
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
 
     def solve(self):
-        pass  # TODO: implement
+        while True:
+            is_any_cell_solved = False
+            for i, j in product(range(9), range(9)):
+                if not self.__rows[i][j].is_solved:
+                    self.__rows[i][j].exclude(self.__rows[i])
+                    self.__rows[i][j].exclude(self.__columns[j])
+                    self.__rows[i][j].exclude(self.__get_square(i, j))
+                    is_any_cell_solved |= self.__rows[i][j].is_solved
+            if not is_any_cell_solved:
+                break
 
     def get_grid(self):
         return [[cell.value for cell in row] for row in self.__rows]

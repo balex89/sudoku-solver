@@ -2,10 +2,14 @@ from collections.abc import Iterable
 
 
 class Cell:
+    VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
-    def __init__(self, init_value=None):                                                        # инициализация объекта класса
-        self.__value = init_value
-        self.__alternatives = set() if init_value is not None else {1, 2, 3, 4, 5, 6, 7, 8, 9}    # если init_value число, то множество альтернатив пустое, клетка решена
+    def __init__(self, init_value=None):                                                         # инициализация объекта класса
+        if init_value in self.VALID_VALUES:
+            self.__value = init_value
+            self.__alternatives = set() if init_value is not None else {1, 2, 3, 4, 5, 6, 7, 8, 9}    # если init_value число, то множество альтернатив пустое, клетка решена
+        else:
+            raise ValueError('Incorrect value')
 
     def __eq__(self, other):                                                      # сравнение объектов класса
         return self.__value == other.__value

@@ -2,7 +2,7 @@ from collections.abc import Iterable
 
 
 class Cell:
-    VALID_VALUES = ({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
+    VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})gi
 
     def __init__(self, init_value=None):                                                         # инициализация объекта класса
         if init_value in self.VALID_VALUES:

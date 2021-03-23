@@ -14,15 +14,14 @@ class Sudoku:
 
     def solve(self):
         while True:
-            isAnyCellSolved = False
+            is_any_cell_solved = False
             for i, j in product(range(9), range(9)):
                 if not self.__rows[i][j].is_solved:
                     self.__rows[i][j].exclude(self.__rows[i])
                     self.__rows[i][j].exclude(self.__columns[j])
                     self.__rows[i][j].exclude(self.__get_square(i, j))
-                    if self.__rows[i][j].is_solved:
-                        isAnyCellSolved = True
-            if not isAnyCellSolved:
+                    is_any_cell_solved |= self.__rows[i][j].is_solved
+            if not is_any_cell_solved:
                 break
 
     def get_grid(self):

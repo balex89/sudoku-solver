@@ -2,7 +2,7 @@ import pathlib
 
 import pytest
 
-from src.utils import read_grid_from_file, write_grid_to_file
+from utils import read_grid_from_file, write_grid_to_file
 
 VALID_FILE_CONTENT = ("*************\n"
                       "*123*456*789*\n"

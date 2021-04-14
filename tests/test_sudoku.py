@@ -1,8 +1,3 @@
-import pytest
-
-import sys
-sys.path.append("./src")
-
 from sudoku import Sudoku
 
 

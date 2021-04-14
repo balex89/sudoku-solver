@@ -1,6 +1,6 @@
 import pytest
 
-from src.cell import Cell
+from cell import Cell
 
 
 def _as_digit(digit: int):

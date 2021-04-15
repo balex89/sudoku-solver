@@ -22,6 +22,10 @@ class Cell:
     def value(self):
         return self.__value
 
+    @property
+    def alternatives(self):
+        return self.__alternatives
+
     @value.setter
     def value(self, new_value):
         if new_value in self.__alternatives:                                       # если аргумент есть в cписке возможных вариантов

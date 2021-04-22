@@ -1,4 +1,5 @@
 from itertools import product
+from collections import Counter
 
 from cell import Cell
 
@@ -12,33 +13,25 @@ class Sudoku:
         for i, j in product((0, 3, 6), (0, 3, 6)):
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
 
-    def exclude_equal_alternatives(self, grid):
-        is_any_cell_solved_ = False  # локалная переменная - флаг что хоть одна клетка решена
-        for i in range(9):   # формируем  два массива - одинкакове альтернативы и их количество в пачке
-            alternatives = []
-            count = []
-            for j in range(9):
-                if not grid[i][j].alternatives in alternatives:
-                    alternatives.append(grid[i][j].alternatives)
-                    count.append(1)
-                else:
-                    count[alternatives.index(grid[i][j].alternatives)] += 1
-            exclude_set = set()     # формируем множество для исключения (альтернативы длинной N в количестве N в одной пачке)
-            for c in range(len(alternatives)):
-                if len(alternatives[c]) == count[c]:
-                    exclude_set = alternatives[c]
-            if len(exclude_set) > 0:     #если такое множество найдено, исключаем его из всех остальных клеток пачки
-                for e in range(9):
-                    if not grid[i][e].is_solved:
-                        if grid[i][e].alternatives != exclude_set:
-                            grid[i][e].exclude(exclude_set)
-                            is_any_cell_solved_ |= grid[i][e].is_solved
-        return is_any_cell_solved_
+    def __exclude_equal_alternatives__(self, grid_view):
+        is_any_cell_solved = False  # флаг что хоть одна клетка решена
+        for i in range(9):
+            alternatives = Counter([grid_view[i][j].alternatives for j in range(9)])  # формируем словарь алтернативы в пачке(строка, столбец или квадрант):количество таких альтернатив в пачке 
+            exclude_set = set()
+            for alternative in alternatives:
+                if len(alternative) == alternatives[alternative]:  # ищем множество для исключения (альтернативы длинной N в количестве N в одной пачке)
+                    exclude_set = alternative
+                    break
+            if len(exclude_set) > 0:     # если такое множество найдено, исключаем его из всех остальных клеток пачки
+                for n in range(9):
+                    if not grid_view[i][n].is_solved:
+                        if grid_view[i][n].alternatives != exclude_set:
+                            grid_view[i][n].exclude(exclude_set)
+                            is_any_cell_solved |= grid_view[i][n].is_solved
+        return is_any_cell_solved
 
     def solve(self):
-        circus = 0
         while True:
-            circus += 1
             is_any_cell_solved = False
             for i, j in product(range(9), range(9)):
                 if not self.__rows[i][j].is_solved:
@@ -47,9 +40,8 @@ class Sudoku:
                     self.__rows[i][j].exclude(self.__get_square(i, j))
                     is_any_cell_solved |= self.__rows[i][j].is_solved
             if not is_any_cell_solved:
-                is_any_cell_solved |= self.exclude_equal_alternatives(self.__rows)
-                is_any_cell_solved |= self.exclude_equal_alternatives(self.__columns)
-                is_any_cell_solved |= self.exclude_equal_alternatives(self.__squares)
+                for grid_view in [self.__rows, self.__columns, self.__squares]:
+                    is_any_cell_solved |= self.__exclude_equal_alternatives__(grid_view)
             if not is_any_cell_solved:
                 break
 

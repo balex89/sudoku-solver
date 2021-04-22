@@ -24,7 +24,7 @@ class Cell:
 
     @property
     def alternatives(self):
-        return self.__alternatives
+        return frozenset(self.__alternatives)
 
     @value.setter
     def value(self, new_value):

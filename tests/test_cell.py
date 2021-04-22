@@ -1,13 +1,12 @@
 import pytest
 
-from src.cell import Cell
+from cell import Cell
 
 
 def _as_digit(digit: int):
     return digit
 
 
-@pytest.mark.xfail(reason="No check for value in Cell constructor")
 def test_init_with_invalid_value():
 
     with pytest.raises(Exception):

@@ -21,13 +21,11 @@ class Sudoku:
             for alternative in alternatives:
                 if len(alternative) == alternatives[alternative]:  # ищем множество для исключения (альтернативы длинной N в количестве N в одной пачке)
                     exclude_set = alternative
-                    break
-            if len(exclude_set) > 0:     # если такое множество найдено, исключаем его из всех остальных клеток пачки
-                for n in range(9):
-                    if not grid_view[i][n].is_solved:
-                        if grid_view[i][n].alternatives != exclude_set:
+                    for n in range(9):
+                        if not grid_view[i][n].is_solved and grid_view[i][n].alternatives != exclude_set:
                             grid_view[i][n].exclude(exclude_set)
                             is_any_cell_solved |= grid_view[i][n].is_solved
+                    break
         return is_any_cell_solved
 
     def solve(self):

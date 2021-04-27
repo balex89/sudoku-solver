@@ -19,7 +19,7 @@ The script attempts to solve it and (if task seems valid) writes the solution to
 
 *WARNING: Work on algorithms are in progress. Might not crack hard puzzles.*
 
-##Sudoku File Format Requirements
+## Sudoku File Format Requirements
 
 _Sudoku file is a text file designed to save Sudoku tasks and solutions._
 

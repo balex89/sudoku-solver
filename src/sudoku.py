@@ -13,7 +13,7 @@ class Sudoku:
         for i, j in product((0, 3, 6), (0, 3, 6)):
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
 
-    def _exclude_equal_alternatives(self, grid_view):
+    def __exclude_equal_alternatives(self, grid_view):
         is_any_cell_solved = False  # флаг что хоть одна клетка решена
         for i in range(9):
             twin_alternatives_counter = Counter(grid_view[i][j].alternatives for j in range(9))  # формируем словарь альтернативы в пачке(строка, столбец или квадрант):количество таких альтернатив в пачке 
@@ -37,7 +37,7 @@ class Sudoku:
                     is_any_cell_solved |= self.__rows[i][j].is_solved
             if not is_any_cell_solved:
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
-                    is_any_cell_solved |= self._exclude_equal_alternatives(grid_view)
+                    is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
             if not is_any_cell_solved:
                 break
 

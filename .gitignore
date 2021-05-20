@@ -9,3 +9,6 @@ __pycache__/
 
 # Environments
 venv/
+
+# Unit test
+.pytest_cache/

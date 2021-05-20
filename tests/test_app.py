@@ -6,8 +6,8 @@ from resources import EASY_TASK, EASY_SOLUTION
 def test_health(client):
     response = client.get("/health")
 
-    assert response.content_type == "text/html; charset=utf-8"
-    assert response.data.decode("utf-8") == "OK"
+    assert response.mimetype == "text/html"
+    assert response.data.decode(response.charset) == "OK"
 
 
 def test_solve(client):
@@ -19,7 +19,7 @@ def test_solve(client):
     data = {
         "grid": EASY_TASK
     }
-    response = client.post(path='/solve', data=json.dumps(data), headers=headers)
+    response = client.post(path="/solve", data=json.dumps(data), headers=headers)
 
     assert response.status_code == 200
     assert response.mimetype == mimetype

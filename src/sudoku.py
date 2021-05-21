@@ -7,7 +7,7 @@ from cell import Cell
 class Sudoku:
 
     def __init__(self, grid):
-        if not(len(grid) == 9 and all([len(item) == 9 for item in grid])):
+        if not self.__is_valid_grid(grid):                  # если грид не 9 на 9 - поднимаем ошибку
             raise ValueError('Incorrect grid. Excepted grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
@@ -29,7 +29,7 @@ class Sudoku:
         return is_any_cell_solved
 
     def solve(self):
-        if not self.__is_valid():
+        if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
             raise ValueError('Sudoku rules are violated')
         while True:
             is_any_cell_solved = False
@@ -52,13 +52,16 @@ class Sudoku:
         return self.__squares[3*(i//3) + j//3]
 
     @staticmethod
-    def __is_valid_cell_sequence(cell_sequence):
+    def __is_valid_cell_sequence(cell_sequence):    # проверка что в "пачке" нет повторяющихся значений
         value_list = [cell.value for cell in cell_sequence if cell.value is not None]
         return len(value_list) == len(set(value_list))
 
-    def __is_valid(self):
-        grid_is_valid = True
-        for grid_view in [self.__rows, self.__columns, self.__squares]:
+    def __is_valid(self):         # проверка на выполнение правил судоку (нет повторяющихся значений в строках, столбцах, квадрантах)
+        for grid_view in (self.__rows, self.__columns, self.__squares):
             for item in grid_view:
-                grid_is_valid &= self.__is_valid_cell_sequence(item)
-        return grid_is_valid
+                if not self.__is_valid_cell_sequence(item):
+                    return False
+        return True
+
+    def __is_valid_grid(self, grid):                # проверка что сетка 9 на 9
+        return len(grid) == 9 and all(len(item) == 9 for item in grid)

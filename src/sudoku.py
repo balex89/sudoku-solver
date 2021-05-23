@@ -2,13 +2,14 @@ from itertools import product
 from collections import Counter
 
 from cell import Cell
+from utils import is_valid_grid
 
 
 class Sudoku:
 
     def __init__(self, grid):
-        if not self.__is_valid_grid(grid):                  # если грид не 9 на 9 - поднимаем ошибку
-            raise ValueError('Incorrect grid. Excepted grid 9x9')
+        if not is_valid_grid(grid):                                 # если грид не 9 на 9 - поднимаем ошибку
+            raise ValueError('Incorrect grid. Expected grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
         self.__squares = []
@@ -62,6 +63,3 @@ class Sudoku:
                 if not self.__is_valid_cell_sequence(item):
                     return False
         return True
-
-    def __is_valid_grid(self, grid):                # проверка что сетка 9 на 9
-        return len(grid) == 9 and all(len(item) == 9 for item in grid)

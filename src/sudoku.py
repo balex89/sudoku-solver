@@ -2,11 +2,14 @@ from itertools import product
 from collections import Counter
 
 from cell import Cell
+from utils import is_valid_grid
 
 
 class Sudoku:
 
     def __init__(self, grid):
+        if not is_valid_grid(grid):                                 # если грид не 9 на 9 - поднимаем ошибку
+            raise ValueError('Incorrect grid. Expected grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
         self.__squares = []
@@ -27,6 +30,8 @@ class Sudoku:
         return is_any_cell_solved
 
     def solve(self):
+        if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
+            raise ValueError('Sudoku rules are violated')
         while True:
             is_any_cell_solved = False
             for i, j in product(range(9), range(9)):
@@ -46,3 +51,15 @@ class Sudoku:
 
     def __get_square(self, i, j):
         return self.__squares[3*(i//3) + j//3]
+
+    @staticmethod
+    def __is_valid_cell_sequence(cell_sequence):    # проверка что в "пачке" нет повторяющихся значений
+        value_list = [cell.value for cell in cell_sequence if cell.value is not None]
+        return len(value_list) == len(set(value_list))
+
+    def __is_valid(self):         # проверка на выполнение правил судоку (нет повторяющихся значений в строках, столбцах, квадрантах)
+        for grid_view in (self.__rows, self.__columns, self.__squares):
+            for item in grid_view:
+                if not self.__is_valid_cell_sequence(item):
+                    return False
+        return True

@@ -37,3 +37,7 @@ def write_grid_to_file(grid: Grid, file_path: Path) -> None:       # функц�
             converted_line = [to_valid_char(value) for value in line]  # создаем список с символами
             line = ''.join(converted_line)                    # преобразуем полученный список в строку
             f.write(line + '\n')                              # записывам полученную строку в файл
+
+
+def is_valid_grid(grid):                                      # проверка что сетка 9 на 9
+    return len(grid) == 9 and all(len(item) == 9 for item in grid)

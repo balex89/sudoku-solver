@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 from typing import Union
 
-from types import CellValue
+from type_aliases import CellValue
 
 
 class Cell:
@@ -10,7 +10,8 @@ class Cell:
     def __init__(self, init_value: CellValue = None) -> None:                      # инициализация объекта класса
         if init_value in self.VALID_VALUES:
             self.__value = init_value
-            self.__alternatives = set() if init_value is not None else {1, 2, 3, 4, 5, 6, 7, 8, 9}    # если init_value число, то множество альтернатив пустое, клетка решена
+            self.__alternatives: set[CellValue] = (set() if init_value is not None
+                                                   else {1, 2, 3, 4, 5, 6, 7, 8, 9})    # если init_value число, то множество альтернатив пустое, клетка решена
         else:
             raise ValueError('Incorrect value')
 
@@ -36,7 +37,8 @@ class Cell:
         else:
             raise ValueError('Incorrect value')
 
-    def exclude(self, exclude_digitals: Union[CellValue, Iterable[CellValue]]) -> None:     # исключение цифр из аргумента из множества альтернатив
+    def exclude(self, exclude_digitals: Union['Cell', CellValue,
+                                              Iterable[Union['Cell', CellValue]]]) -> None:     # исключение цифр из аргумента из множества альтернатив
         if len(self.__alternatives) > 0:                                # что-то делаем, если множество альтернатив не пустое
             if isinstance(exclude_digitals, Iterable):                  # формируем множество для исключения (exclude_set) в зависимоти от аргумента (Iterable или нет)
                 exclude_set = set()

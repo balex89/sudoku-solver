@@ -1,4 +1,4 @@
-from types import CellValue, Grid, Path
+from type_aliases import CellValue, Grid, Path
 
 EMPTY_CELL_CHAR = " "                                        #символ пустой клетки
 VALID_NUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
@@ -39,5 +39,5 @@ def write_grid_to_file(grid: Grid, file_path: Path) -> None:       # функц�
             f.write(line + '\n')                              # записывам полученную строку в файл
 
 
-def is_valid_grid(grid):                                      # проверка что сетка 9 на 9
+def is_valid_grid(grid: Grid) -> bool:                        # проверка что сетка 9 на 9
     return len(grid) == 9 and all(len(item) == 9 for item in grid)

@@ -3,7 +3,7 @@ import os
 
 from sudoku import Sudoku
 from utils import *
-from types import Path
+from type_aliases import Path
 
 
 def solve_file(file_path: Path) -> None:                                                         # чтение задания, решение, запись решения в файл

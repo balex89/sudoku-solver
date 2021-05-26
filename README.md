@@ -3,7 +3,7 @@ Yet another tool for automatic [sudoku puzzle](https://en.wikipedia.org/wiki/Sud
 
 *WARNING: Work on the algorithm is in progress. Might not crack hard puzzles.*
 
-## Pre-requisites
+## Prerequisites
 - [Python 3.9 +](https://www.python.org/downloads/)
 - [pip](https://pip.pypa.io/en/stable/)
 

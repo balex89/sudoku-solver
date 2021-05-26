@@ -1,4 +1,5 @@
 from sudoku import Sudoku
+from cell import Cell
 
 
 EASY_TASK = [
@@ -49,42 +50,7 @@ HARD_SOLUTION = [
     [9, 5, 6, 2, 1, 3, 7, 8, 4]
     ]
 
-EEA_TASK = [
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None]
-    ]
-
-EEA_ALTERNATIVES = [              
-    # альтернативы для первой строки.
-    {1, 2, 3, 4},
-    {1, 2, 3, 4},
-    {1, 2, 3, 4},
-    {1, 2, 3, 4},
-    {1, 2, 3, 4, 5},
-    {1, 2, 3, 4, 6},
-    {1, 2, 3, 4, 7},
-    {1, 2, 3, 4, 8},
-    {1, 2, 3, 4, 9},
-]
-
-EEA_SOLUTION =[
-    [None, None, None, None, 5, 6, 7, 8, 9],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None, None, None]
-    ]
+EMPTY_TASK = [[None] * 9 for i in range(9)] 
 
 
 def test_sudoku_solver_easy_task():
@@ -99,9 +65,36 @@ def test_sudoku_solver_hard_task():
     assert s.get_grid() == HARD_SOLUTION
 
 
-def test_sudoku_EEA():
-    s = Sudoku(EEA_TASK)
-    for i in range(9):
-        s._Sudoku__rows[0][i]._Cell__alternatives = EEA_ALTERNATIVES[i]
-    s._Sudoku__exclude_equal_alternatives(s._Sudoku__rows)
-    assert s.get_grid() == EEA_SOLUTION
+def _cell_from_alternatives(alternatives=None):
+    c = Cell()
+    if alternatives is not None:
+        c._Cell__alternatives = alternatives
+    return c
+
+
+def test_exclude_equal_alternatives():
+    EEA_1ST_ROW_ALTERNATIVES = [
+    {1, 2, 3, 4},
+    {1, 2, 3, 4},
+    {1, 2, 3, 4},
+    {1, 2, 3, 4},
+    {1, 2, 3, 4, 5},
+    {1, 2, 3, 4, 6},
+    {1, 2, 3, 4, 7},
+    {1, 2, 3, 4, 8},
+    {1, 2, 3, 4, 9}
+    ]
+    EEA_SOLUTION = [
+    [None, None, None, None, 5, 6, 7, 8, 9],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None]
+    ]
+    grid_view = [[_cell_from_alternatives(EEA_1ST_ROW_ALTERNATIVES[i]) if j == 0 else _cell_from_alternatives() for i in range(9)] for j in range(9)]
+    Sudoku._Sudoku__exclude_equal_alternatives(grid_view)
+    assert [[cell.value for cell in row] for row in grid_view] == EEA_SOLUTION

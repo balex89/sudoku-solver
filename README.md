@@ -1,7 +1,7 @@
 # Sudoku Solver
 Yet another tool for automatic [sudoku puzzle](https://en.wikipedia.org/wiki/Sudoku) solving. Works with [basic puzzle rules](https://www.learn-sudoku.com/sudoku-rules.html). 
 
-## Pre-requisites
+## Prerequisites
 - [Python 3.9 +](https://www.python.org/downloads/)
 - [pip](https://pip.pypa.io/en/stable/)
 
@@ -17,7 +17,7 @@ python src/solver.py path/to/sudoku-file
 ```
 The script attempts to solve it and (if task seems valid) writes the solution to `path/to/sudoku-file-solution`.
 
-*WARNING: Work on algorithms are in progress. Might not crack hard puzzles.*
+*WARNING: Work on algorithms is in progress. Might not crack hard puzzles.*
 
 ## Sudoku File Format Requirements
 

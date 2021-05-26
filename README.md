@@ -18,7 +18,7 @@ python -m pytest -v
 ```
 
 ## Run web-server
-On Windows:
+On Windows (e.g. on port 5000):
 ```
 cd src/
 set FLASK_APP=app.main
@@ -29,13 +29,19 @@ python -m flask run -h 0.0.0.0 -p 5000
 Using `curl` (on Windows 10 works with v.1803 +):
 ### Check health
 ```
+curl -X GET http://<host>:<port>/health
+```
+
+Example: 
+```
 curl -X GET http://localhost:5000/health
 ```
+
 ### Get sudoku solution
 ```
-curl -X POST http://<host>:<port>/solve -H "Content-type:application/json" -d "{\"grid\": <GRID>}"
+curl -X POST http://<host>:<port>/solve -H "Content-type:application/json" -d "{\"grid\": <grid>}"
 ```
-Here `<GRID>` is a 9x9 nested array.
+Here `<grid>` is a 9x9 nested array.
 
 Example:
 ```

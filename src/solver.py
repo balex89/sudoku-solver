@@ -3,9 +3,10 @@ import os
 
 from sudoku import Sudoku
 from utils import *
+from type_aliases import Path
 
 
-def solve_file(file_path: str):                                                                      # чтение задания, решение, запись решения в файл
+def solve_file(file_path: Path) -> None:                                                         # чтение задания, решение, запись решения в файл
     sud = Sudoku(read_grid_from_file(file_path))                                                     # чтение задания из файла, создание объекта класа Sudoku
     sud.solve()                                                                                      # решение
     new_file_name = os.path.splitext(file_path)[0]+"-solution"+os.path.splitext(file_path)[1]        # добавляем к имени файла "-solution"

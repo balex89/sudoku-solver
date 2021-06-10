@@ -7,6 +7,10 @@ from utils import is_valid_grid
 from type_aliases import Grid
 
 
+class InvalidSudokuException(Exception):
+    pass
+
+
 class Sudoku:
 
     def __init__(self, grid: Grid) -> None:
@@ -17,6 +21,7 @@ class Sudoku:
         self.__squares = []
         for i, j in product((0, 3, 6), (0, 3, 6)):
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
+        self._speculation_depth = 0
 
 
     @staticmethod
@@ -67,3 +72,7 @@ class Sudoku:
                 if not self.__is_valid_cell_sequence(item):
                     return False
         return True
+
+    @property
+    def is_solved(self) -> bool:
+        return all(self.__rows[i][j].is_solved for i in range(9) for j in range(9))

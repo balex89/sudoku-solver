@@ -8,7 +8,8 @@ EMPTY_CELL_CHAR = " "                                        #символ пу�
 VALID_NUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
 VALID_CHARS = (*VALID_NUMBERS,EMPTY_CELL_CHAR)
 
-GRID_PATTERN = """\n╔═══════╤═══════╤═══════╗
+GRID_PATTERN = """
+╔═══════╤═══════╤═══════╗
 ║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
 ║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
 ║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
@@ -62,7 +63,7 @@ def is_valid_grid(grid: Grid) -> bool:                        # проверка
 
 class MakeDirRotatingFileHandler(logging.handlers.RotatingFileHandler):
     """
-    Log Handler similar to built-in RotatingFileHandler but ensures logs folder existence.
+    Log Handler similar to built-in RotatingFileHandler but ensures logs folder exists.
     """
     def __init__(self, filename, mode='a', maxBytes=0,
                  backupCount=0, encoding=None, delay=False, errors=None):

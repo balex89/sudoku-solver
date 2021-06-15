@@ -12,3 +12,7 @@ venv/
 
 # Unit test
 .pytest_cache/
+
+# Logs
+logs/
+*.log

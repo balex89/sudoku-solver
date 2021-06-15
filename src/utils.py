@@ -1,9 +1,27 @@
+import logging.handlers
+import pathlib
+import itertools
+
 from type_aliases import CellValue, Grid, Path
 
 EMPTY_CELL_CHAR = " "                                        #символ пустой клетки
 VALID_NUMBERS = ("1", "2", "3", "4", "5", "6", "7", "8", "9")  # кортеж допустимых символов, кроме символа пустой клетки
 VALID_CHARS = (*VALID_NUMBERS,EMPTY_CELL_CHAR)
 
+GRID_PATTERN = """
+╔═══════╤═══════╤═══════╗
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+╟───────┼───────┼───────╢
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+╟───────┼───────┼───────╢
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+║{}{}{}{}{}{} │{}{}{}{}{}{} │{}{}{}{}{}{} ║
+╚═══════╧═══════╧═══════╝"""
 
 _decode_cell_char = lambda c: int(c) if c != EMPTY_CELL_CHAR else None  #функция возвращает валидный символ, либо цифру либо None
 
@@ -41,3 +59,26 @@ def write_grid_to_file(grid: Grid, file_path: Path) -> None:       # функц�
 
 def is_valid_grid(grid: Grid) -> bool:                        # проверка что сетка 9 на 9
     return len(grid) == 9 and all(len(item) == 9 for item in grid)
+
+
+class MakeDirRotatingFileHandler(logging.handlers.RotatingFileHandler):
+    """
+    Log Handler similar to built-in RotatingFileHandler but ensures logs folder exists.
+    """
+    def __init__(self, filename, mode='a', maxBytes=0,
+                 backupCount=0, encoding=None, delay=False, errors=None):
+        pathlib.Path(filename).parent.mkdir(exist_ok=True)
+        super().__init__(filename, mode, maxBytes, backupCount, encoding, delay, errors)
+
+
+def draw_grid(grid: Grid, i: CellValue = None, j: CellValue = None):
+    """
+    Converts sudoku grid to a beautified human-readable multiline string.
+    Adds visual pointer to cell in row i column j if i, j specified.
+    """
+    if i is None or j is None:
+        fillers = (" " for _ in range(81))
+    else:
+        fillers = (">" if k == i*9 + j else " " for k in range(81))
+    values = (v if v is not None else " " for v in itertools.chain(*grid))
+    return GRID_PATTERN.format(*itertools.chain(*zip(fillers, values)))

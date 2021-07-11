@@ -1,6 +1,6 @@
 from sudoku import Sudoku
 from cell import Cell
-from resources import EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION
+from resources import EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION, HARD_TASK_2
 
 
 def test_sudoku_solver_easy_task():
@@ -50,3 +50,10 @@ def test_exclude_equal_alternatives():
     Sudoku._Sudoku__exclude_equal_alternatives(grid_view)
     assert [cell._Cell__alternatives for cell in grid_view[0]] == EEA_1ST_ROW_ALTERNATIVES_SOLUTION # проверяем альтернативы в первой строке
     assert all([grid_view[i][j]._Cell__alternatives == {1, 2, 3, 4, 5, 6, 7, 8, 9} for j in range(9)] for i in range(1,9)) # проверяем, что альтернативы в других строках не изменлись
+
+
+def test_sudoku_solver_hard_task_2():
+    s = Sudoku(HARD_TASK_2)
+    s.solve()
+    # assert s.get_grid() == EASY_SOLUTION
+    pass

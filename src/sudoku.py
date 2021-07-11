@@ -1,10 +1,13 @@
 from itertools import product
 from collections import Counter
 from typing import Sequence
+import copy
 
 from cell import Cell
 from utils import is_valid_grid
 from type_aliases import Grid
+
+MAX_DEPTH = 2
 
 
 class InvalidSudokuException(Exception):
@@ -22,7 +25,6 @@ class Sudoku:
         for i, j in product((0, 3, 6), (0, 3, 6)):
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
         self._speculation_depth = 0
-
 
     @staticmethod
     def __exclude_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
@@ -42,9 +44,12 @@ class Sudoku:
         if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
             raise ValueError('Sudoku rules are violated')
         while True:
+            if self._speculation_depth > 0 and not self.__is_valid():
+                raise InvalidSudokuException()
             is_any_cell_solved = False
             for i, j in product(range(9), range(9)):
                 if not self.__rows[i][j].is_solved:
+                    print("spec_depth: ", str(self._speculation_depth), "i:", str(i), " j: ", str(j), "", "alternatives: ", str(self.__rows[i][j]._Cell__alternatives), "exclude: ", str(set(c.value for c in self.__rows[i])))
                     self.__rows[i][j].exclude(self.__rows[i])
                     self.__rows[i][j].exclude(self.__columns[j])
                     self.__rows[i][j].exclude(self.__get_square(i, j))
@@ -52,6 +57,8 @@ class Sudoku:
             if not is_any_cell_solved:
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
+            if not is_any_cell_solved and self._speculation_depth == 0:
+                is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 break
 
@@ -76,3 +83,22 @@ class Sudoku:
     @property
     def is_solved(self) -> bool:
         return all(self.__rows[i][j].is_solved for i in range(9) for j in range(9))
+
+    def __exclude_violating_alternative(self):
+        for i, j in product(range(9), range(9)):
+            if len(self.__rows[i][j]._Cell__alternatives) == MAX_DEPTH:
+                sudoku_copy = copy.deepcopy(self)
+                sudoku_copy._speculation_depth += 1
+                alternanives = copy.deepcopy(sudoku_copy.__rows[i][j]._Cell__alternatives)
+                print("-----FIND CELL----- i:", str(i), " j: ", str(j), "", "alternatives: ", str(self.__rows[i][j]._Cell__alternatives))
+                while len(alternanives) > 0:
+                    sudoku_copy.__rows[i][j].value = alternanives.pop()
+                    try:
+                        sudoku_copy.solve()
+                    except InvalidSudokuException:
+                        print("------Exclude value--------- i:", str(i), " j: ", str(j), "alternatives: ", str(self.__rows[i][j]._Cell__alternatives), "exclude: ", str(sudoku_copy.__rows[i][j].value))
+                        self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
+                        return True
+                    if not sudoku_copy.is_solved:
+                        break
+        return False

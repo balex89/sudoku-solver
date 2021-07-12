@@ -4,6 +4,10 @@ from typing import Union
 from type_aliases import CellValue
 
 
+class CellStateException(Exception):
+    pass
+
+
 class Cell:
     VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
@@ -57,7 +61,7 @@ class Cell:
             result_alternatives = self.__alternatives.difference(exclude_set)                # result_alternatives - разность текущего множества альтернатив и множетсва для исключения
 
             if len(result_alternatives) == 0:                                                # если множество альтернатив опустошается до решения:
-                raise Exception('Empty alternatives before solution')                        # вызов исключения
+                raise CellStateException('Empty alternatives before solution')               # вызов исключения
             else:
                 self.__alternatives = result_alternatives                                 # если нет, то исключаем из множества альтернатив exclude_set
 

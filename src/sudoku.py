@@ -3,7 +3,7 @@ from collections import Counter
 from typing import Sequence
 import copy
 
-from cell import Cell
+from cell import Cell, CellStateException
 from utils import is_valid_grid
 from type_aliases import Grid
 
@@ -86,17 +86,17 @@ class Sudoku:
 
     def __exclude_violating_alternative(self):
         for i, j in product(range(9), range(9)):
-            if len(self.__rows[i][j]._Cell__alternatives) == MAX_DEPTH:
-                sudoku_copy = copy.deepcopy(self)
-                sudoku_copy._speculation_depth += 1
-                alternanives = copy.deepcopy(sudoku_copy.__rows[i][j]._Cell__alternatives)
-                print("-----FIND CELL----- i:", str(i), " j: ", str(j), "", "alternatives: ", str(self.__rows[i][j]._Cell__alternatives))
-                while len(alternanives) > 0:
-                    sudoku_copy.__rows[i][j].value = alternanives.pop()
+            if len(self.__rows[i][j].alternatives) == MAX_DEPTH:
+                alternatives = set(self.__rows[i][j].alternatives)
+                print("-----FIND CELL----- i:", str(i), " j: ", str(j), "", "alternatives: ", str(alternatives))
+                while len(alternatives) > 0:
+                    sudoku_copy = copy.deepcopy(self)
+                    sudoku_copy._speculation_depth += 1
+                    sudoku_copy.__rows[i][j].value = alternatives.pop()
                     try:
                         sudoku_copy.solve()
-                    except InvalidSudokuException:
-                        print("------Exclude value--------- i:", str(i), " j: ", str(j), "alternatives: ", str(self.__rows[i][j]._Cell__alternatives), "exclude: ", str(sudoku_copy.__rows[i][j].value))
+                    except (InvalidSudokuException, CellStateException):
+                        print("------Exclude value--------- i:", str(i), " j: ", str(j), "alternatives: ", str(self.__rows[i][j].alternatives), "exclude: ", str(sudoku_copy.__rows[i][j].value))
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
                     if not sudoku_copy.is_solved:

@@ -49,7 +49,6 @@ class Sudoku:
             is_any_cell_solved = False
             for i, j in product(range(9), range(9)):
                 if not self.__rows[i][j].is_solved:
-                    print("spec_depth: ", str(self._speculation_depth), "i:", str(i), " j: ", str(j), "", "alternatives: ", str(self.__rows[i][j]._Cell__alternatives), "exclude: ", str(set(c.value for c in self.__rows[i])))
                     self.__rows[i][j].exclude(self.__rows[i])
                     self.__rows[i][j].exclude(self.__columns[j])
                     self.__rows[i][j].exclude(self.__get_square(i, j))
@@ -57,7 +56,7 @@ class Sudoku:
             if not is_any_cell_solved:
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth == 0:
+            if not is_any_cell_solved and self._speculation_depth <= 4:
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 break
@@ -88,7 +87,6 @@ class Sudoku:
         for i, j in product(range(9), range(9)):
             if len(self.__rows[i][j].alternatives) == MAX_DEPTH:
                 alternatives = set(self.__rows[i][j].alternatives)
-                print("-----FIND CELL----- i:", str(i), " j: ", str(j), "", "alternatives: ", str(alternatives))
                 while len(alternatives) > 0:
                     sudoku_copy = copy.deepcopy(self)
                     sudoku_copy._speculation_depth += 1
@@ -96,7 +94,6 @@ class Sudoku:
                     try:
                         sudoku_copy.solve()
                     except (InvalidSudokuException, CellStateException):
-                        print("------Exclude value--------- i:", str(i), " j: ", str(j), "alternatives: ", str(self.__rows[i][j].alternatives), "exclude: ", str(sudoku_copy.__rows[i][j].value))
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
                     if not sudoku_copy.is_solved:

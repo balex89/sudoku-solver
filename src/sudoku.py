@@ -2,17 +2,19 @@ from itertools import product
 from collections import Counter
 from typing import Sequence
 import copy
+import logging
 
 from cell import Cell, CellStateException
-from utils import is_valid_grid
+from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
+
+logger = logging.getLogger(__name__)
 
 MAX_DEPTH = 2
 
 
 class InvalidSudokuException(Exception):
     pass
-
 
 class Sudoku:
 
@@ -44,9 +46,11 @@ class Sudoku:
         if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
             raise ValueError('Sudoku rules are violated')
         while True:
+            logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
             if self._speculation_depth > 0 and not self.__is_valid():
                 raise InvalidSudokuException()
             is_any_cell_solved = False
+            logger.debug("Using basic rules...")
             for i, j in product(range(9), range(9)):
                 if not self.__rows[i][j].is_solved:
                     self.__rows[i][j].exclude(self.__rows[i])
@@ -54,12 +58,14 @@ class Sudoku:
                     self.__rows[i][j].exclude(self.__get_square(i, j))
                     is_any_cell_solved |= self.__rows[i][j].is_solved
             if not is_any_cell_solved:
+                logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
             if not is_any_cell_solved and self._speculation_depth <= 4:
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 break
+            logger.debug("Some new cells are solved")
 
     def get_grid(self) -> Grid:
         return [[cell.value for cell in row] for row in self.__rows]

@@ -1,6 +1,6 @@
 from sudoku import Sudoku
 from cell import Cell
-from resources import EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION, HARD_TASK_2, HARD_TASK_2_SOLUTION, HARD_TASK_3, HARD_TASK_3_SOLUTION
+from resources import EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION, HARD_TASK_2, HARD_TASK_SOLUTION_2, HARD_TASK_3, HARD_TASK_SOLUTION_3
 
 
 def test_sudoku_solver_easy_task():
@@ -55,10 +55,10 @@ def test_exclude_equal_alternatives():
 def test_sudoku_solver_hard_task_2():
     s = Sudoku(HARD_TASK_2)
     s.solve()
-    assert s.get_grid() == HARD_TASK_2_SOLUTION
+    assert s.get_grid() == HARD_TASK_SOLUTION_2
 
 
 def test_sudoku_solver_hard_task_3():
     s = Sudoku(HARD_TASK_3)
     s.solve()
-    assert s.get_grid() == HARD_TASK_3_SOLUTION
+    assert s.get_grid() == HARD_TASK_SOLUTION_3

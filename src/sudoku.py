@@ -10,11 +10,13 @@ from type_aliases import Grid
 
 logger = logging.getLogger(__name__)
 
-MAX_DEPTH = 2
+EVA_MAX_ALTERNATIVES_NUMBER = 2
+MAX_SPECULATION_DEPTH = 4
 
 
 class InvalidSudokuException(Exception):
     pass
+
 
 class Sudoku:
 
@@ -61,7 +63,7 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= 4:
+            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 break
@@ -91,8 +93,8 @@ class Sudoku:
 
     def __exclude_violating_alternative(self):
         for i, j in product(range(9), range(9)):
-            if len(self.__rows[i][j].alternatives) == MAX_DEPTH:
-                alternatives = set(self.__rows[i][j].alternatives)
+            if len(self.__rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
+                alternatives = sorted(self.__rows[i][j].alternatives)
                 while len(alternatives) > 0:
                     sudoku_copy = copy.deepcopy(self)
                     sudoku_copy._speculation_depth += 1
@@ -102,6 +104,4 @@ class Sudoku:
                     except (InvalidSudokuException, CellStateException):
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
-                    if not sudoku_copy.is_solved:
-                        break
         return False

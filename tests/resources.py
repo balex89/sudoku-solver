@@ -60,7 +60,7 @@ HARD_TASK_2 = [
   [None, None, 9, 2, 4, None, None, None, 1],
 ]
 
-HARD_TASK_2_SOLUTION = [
+HARD_TASK_SOLUTION_2 = [
   [9, 6, 7, 4, 1, 3, 5, 8, 2],
   [8, 1, 3, 9, 5, 2, 7, 6, 4],
   [5, 4, 2, 6, 8, 7, 3, 1, 9],
@@ -83,7 +83,7 @@ HARD_TASK_3 = [
     [None, None, 8, 5, None, None, None, 1, None],
     [None, 9, None, None, None, None, 4, None, None]
 ]
-HARD_TASK_3_SOLUTION = [
+HARD_TASK_SOLUTION_3 = [
     [8, 1, 2, 7, 5, 3, 6, 4, 9],
     [9, 4, 3, 6, 8, 2, 1, 7, 5],
     [6, 7, 5, 4, 9, 1, 2, 8, 3],

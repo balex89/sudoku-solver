@@ -82,6 +82,8 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
+            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
+                is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 logger.debug("Using Leave Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:

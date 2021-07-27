@@ -31,6 +31,25 @@ class Sudoku:
         self._speculation_depth = 0
 
     @staticmethod
+    def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
+        is_any_cell_solved = False  # флаг что хоть одна клетка решена
+        for i in range(9):
+            pack = [grid_view[i][j].alternatives for j in range(9)]    # список альтернатив в одной пачке
+            mirror_pack = [frozenset(n for n in range(9) if m in pack[n]) for m in range(1, 10)] # список множества клеток, в которых есть определенная цифра (от 1 до 9)
+            twin_cell_list = Counter(mirror_pack)  # счетчик одинаковых списков клеток
+            for cells in twin_cell_list:      # перебираем счетчик
+                if len(cells) == twin_cell_list[cells]:  # если длина списка клеток равна количеству цифр, которые встречаются в этих клетках
+                    exclude_list = []
+                    for k in range(9):        # перебираем списки клеток и формируем список цифр, которые нужно оставить
+                        if mirror_pack[k] == cells:
+                            exclude_list.append(k+1)  # т.е. например в нулевой строке записаны клетки в которых встречается единица, поэтому k+1
+                    for cell in cells:  # из клеток в найденном множестве cells... 
+                        grid_view[i][cell].exclude(grid_view[i][cell].alternatives.difference(exclude_list)) # исключаем все, кроме exclude_list
+                        is_any_cell_solved |= grid_view[i][cell].is_solved
+                    break
+        return is_any_cell_solved
+
+    @staticmethod
     def __exclude_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
         is_any_cell_solved = False  # флаг что хоть одна клетка решена
         for i in range(9):
@@ -63,6 +82,10 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
+            if not is_any_cell_solved:
+                logger.debug("Using Leave Equal Alternatives method...")
+                for grid_view in [self.__rows, self.__columns, self.__squares]:
+                    is_any_cell_solved |= self.__leave_equal_alternatives(grid_view)
             if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:

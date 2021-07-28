@@ -34,15 +34,14 @@ class Sudoku:
     def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
         is_any_cell_solved = False  # флаг что хоть одна клетка решена
         for batch in grid_view:
-            list_of_alt_sets = [batch[j].alternatives for j in range(9)]    # список альтернатив в одной пачке
-            alternative_to_cell_indexes = {m: frozenset(n for n in range(9) if m in list_of_alt_sets[n]) for m in range(1, 10)}  # словарь цифра: список множества клеток, в которых она встречается
-            twin_cell_list = Counter(alternative_to_cell_indexes[m] for m in alternative_to_cell_indexes)  # счетчик одинаковых списков клеток
-            for cells in twin_cell_list:      # перебираем счетчик
-                if len(cells) == twin_cell_list[cells]:  # если длина списка клеток равна количеству цифр, которые встречаются в этих клетках
-                    exclude_set = {k for k in alternative_to_cell_indexes if alternative_to_cell_indexes[k] == cells}
-                    for cell in cells:  # из клеток в найденном множестве cells... 
-                        batch[cell].exclude(batch[cell].alternatives.difference(exclude_set)) # исключаем все, кроме exclude_set
-                        is_any_cell_solved |= batch[cell].is_solved
+            list_of_alt_sets = [batch[j].alternatives for j in range(9)]    
+            alternative_to_cell_indexes = {m: frozenset(n for n in range(9) if m in list_of_alt_sets[n]) for m in range(1, 10)}
+            for cell_indexes, alt_count in Counter(alternative_to_cell_indexes.values()).items():
+                if len(cell_indexes) == alt_count:
+                    common_alts = {k for k in alternative_to_cell_indexes if alternative_to_cell_indexes[k] == cell_indexes}
+                    for j in cell_indexes:
+                        batch[j].exclude(list_of_alt_sets[j] - common_alts)
+                        is_any_cell_solved |= batch[j].is_solved
                     break
         return is_any_cell_solved
 

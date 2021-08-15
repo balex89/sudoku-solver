@@ -21,24 +21,29 @@ class InvalidSudokuException(Exception):
 class Sudoku:
 
     def __init__(self, grid: Grid) -> None:
-        if not is_valid_grid(grid):                                 # если грид не 9 на 9 - поднимаем ошибку
+        if not is_valid_grid(grid):
             raise ValueError('Incorrect grid. Expected grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
-        self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
+        self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(
+            9)]
         self.__squares = []
         for i, j in product((0, 3, 6), (0, 3, 6)):
-            self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
+            self.__squares.append([self.__rows[x][y] for x in range(i,
+                                   i+3) for y in range(j, j+3)])
         self._speculation_depth = 0
 
     @staticmethod
     def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
         is_any_cell_solved = False  # флаг что хоть одна клетка решена
         for batch in grid_view:
-            list_of_alt_sets = [batch[j].alternatives for j in range(9)]    
-            alternative_to_cell_indexes = {m: frozenset(n for n in range(9) if m in list_of_alt_sets[n]) for m in range(1, 10)}
-            for cell_indexes, alt_count in Counter(alternative_to_cell_indexes.values()).items():
+            list_of_alt_sets = [batch[j].alternatives for j in range(9)]
+            alternative_to_cell_indexes = {m: frozenset(n for n in range(9) if(
+                m in list_of_alt_sets[n])) for m in range(1, 10)}
+            for cell_indexes, alt_count in Counter(
+                 alternative_to_cell_indexes.values()).items():
                 if len(cell_indexes) == alt_count:
-                    common_alts = {k for k in alternative_to_cell_indexes if alternative_to_cell_indexes[k] == cell_indexes}
+                    common_alts = {k for k in alternative_to_cell_indexes if (
+                        alternative_to_cell_indexes[k] == cell_indexes)}
                     for j in cell_indexes:
                         batch[j].exclude(list_of_alt_sets[j] - common_alts)
                         is_any_cell_solved |= batch[j].is_solved
@@ -49,21 +54,25 @@ class Sudoku:
     def __exclude_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
         is_any_cell_solved = False  # флаг что хоть одна клетка решена
         for batch in grid_view:
-            twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))  # формируем словарь альтернативы в пачке(строка, столбец или квадрант):количество таких альтернатив в пачке
+            twin_alternatives_counter = (
+                Counter(batch[j].alternatives for j in range(9)))
             for alternatives in twin_alternatives_counter:
-                if len(alternatives) == twin_alternatives_counter[alternatives]:  # ищем множество для исключения (альтернативы длинной N в количестве N в одной пачке)
+                if len(alternatives) == (
+                 twin_alternatives_counter[alternatives]):
                     for n in range(9):
-                        if not batch[n].is_solved and batch[n].alternatives != alternatives:
+                        if (not batch[n].is_solved
+                           and batch[n].alternatives != alternatives):
                             batch[n].exclude(alternatives)
                             is_any_cell_solved |= batch[n].is_solved
                     break
         return is_any_cell_solved
 
     def solve(self) -> None:
-        if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
+        if not self.__is_valid():
             raise ValueError('Sudoku rules are violated')
         while True:
-            logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
+            logger.debug("New iteration. Current sudoku status: %s", draw_grid(
+                self.get_grid()))
             if self._speculation_depth > 0 and not self.__is_valid():
                 raise InvalidSudokuException()
             is_any_cell_solved = False
@@ -77,12 +86,15 @@ class Sudoku:
             if not is_any_cell_solved:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
-                    is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
+                    is_any_cell_solved |= (
+                        self.__exclude_equal_alternatives(grid_view))
             if not is_any_cell_solved:
                 logger.debug("Using Leave Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
-                    is_any_cell_solved |= self.__leave_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
+                    is_any_cell_solved |= self.__leave_equal_alternatives(
+                        grid_view)
+            if (not is_any_cell_solved
+               and self._speculation_depth <= MAX_SPECULATION_DEPTH):
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
                 break
@@ -95,11 +107,12 @@ class Sudoku:
         return self.__squares[3*(i//3) + j//3]
 
     @staticmethod
-    def __is_valid_cell_sequence(cell_sequence: Sequence[Cell]) -> bool:    # проверка что в "пачке" нет повторяющихся значений
-        value_list = [cell.value for cell in cell_sequence if cell.value is not None]
+    def __is_valid_cell_sequence(cell_sequence: Sequence[Cell]) -> bool:
+        value_list = [cell.value for cell in cell_sequence if (
+            cell.value is not None)]
         return len(value_list) == len(set(value_list))
 
-    def __is_valid(self) -> bool:         # проверка на выполнение правил судоку (нет повторяющихся значений в строках, столбцах, квадрантах)
+    def __is_valid(self) -> bool:
         for grid_view in (self.__rows, self.__columns, self.__squares):
             for item in grid_view:
                 if not self.__is_valid_cell_sequence(item):
@@ -108,11 +121,13 @@ class Sudoku:
 
     @property
     def is_solved(self) -> bool:
-        return all(self.__rows[i][j].is_solved for i in range(9) for j in range(9))
+        return all(self.__rows[i][j].is_solved for i in range(
+            9) for j in range(9))
 
     def __exclude_violating_alternative(self):
         for i, j in product(range(9), range(9)):
-            if len(self.__rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
+            if len(self.__rows[i][j].alternatives
+                   ) <= EVA_MAX_ALTERNATIVES_NUMBER:
                 alternatives = sorted(self.__rows[i][j].alternatives)
                 while len(alternatives) > 0:
                     sudoku_copy = copy.deepcopy(self)
@@ -121,6 +136,7 @@ class Sudoku:
                     try:
                         sudoku_copy.solve()
                     except (InvalidSudokuException, CellStateException):
-                        self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
+                        self.__rows[i][j].exclude(
+                            sudoku_copy.__rows[i][j].value)
                         return True
         return False

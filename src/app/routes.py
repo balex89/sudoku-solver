@@ -13,13 +13,13 @@ def init():
     logger.info("Init app routes")
 
 
-@app.route("/health")
+@app.route("/v1/health")
 def health():
     logger.info("Call health. Returning \"OK\"")
     return "OK"
 
 
-@app.route("/solve", methods=["POST"])
+@app.route("/v1/solve", methods=["POST"])
 def solve():
 
     grid = request.json.get("grid", [])

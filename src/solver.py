@@ -15,14 +15,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def solve_file(file_path: Path) -> None:                                                         # чтение задания, решение, запись решения в файл
+def solve_file(file_path: Path) -> None:
     logger.info("Solving sudoku from file %s", file_path)
-    sud = Sudoku(utils.read_grid_from_file(file_path))                                                     # чтение задания из файла, создание объекта класа Sudoku
-    sud.solve()                                                                                      # решение
+    sud = Sudoku(utils.read_grid_from_file(file_path))
+    sud.solve()
     logger.info("Sudoku solved")
-    new_file_name = os.path.splitext(file_path)[0]+"-solution"+os.path.splitext(file_path)[1]        # добавляем к имени файла "-solution"
+    new_file_name = os.path.splitext(file_path)[0]+"-solution"+os.path.splitext(file_path)[1]
     logger.info("Writing solution to %s", new_file_name)
-    utils.write_grid_to_file(sud.get_grid(), new_file_name)                                                # запись решения в файл
+    utils.write_grid_to_file(sud.get_grid(), new_file_name)
 
 
 if __name__ == "__main__":

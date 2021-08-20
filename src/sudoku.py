@@ -21,7 +21,7 @@ class InvalidSudokuException(Exception):
 class Sudoku:
 
     def __init__(self, grid: Grid) -> None:
-        if not is_valid_grid(grid):                                 # если грид не 9 на 9 - поднимаем ошибку
+        if not is_valid_grid(grid):
             raise ValueError('Incorrect grid. Expected grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
@@ -32,13 +32,15 @@ class Sudoku:
 
     @staticmethod
     def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
-        is_any_cell_solved = False  # флаг что хоть одна клетка решена
+        is_any_cell_solved = False
         for batch in grid_view:
-            list_of_alt_sets = [batch[j].alternatives for j in range(9)]    
-            alternative_to_cell_indexes = {m: frozenset(n for n in range(9) if m in list_of_alt_sets[n]) for m in range(1, 10)}
+            list_of_alt_sets = [batch[j].alternatives for j in range(9)]
+            alternative_to_cell_indexes = {m: frozenset(
+                n for n in range(9) if m in list_of_alt_sets[n]) for m in range(1, 10)}
             for cell_indexes, alt_count in Counter(alternative_to_cell_indexes.values()).items():
                 if len(cell_indexes) == alt_count:
-                    common_alts = {k for k in alternative_to_cell_indexes if alternative_to_cell_indexes[k] == cell_indexes}
+                    common_alts = {k for k in alternative_to_cell_indexes if (
+                        alternative_to_cell_indexes[k] == cell_indexes)}
                     for j in cell_indexes:
                         batch[j].exclude(list_of_alt_sets[j] - common_alts)
                         is_any_cell_solved |= batch[j].is_solved
@@ -47,11 +49,11 @@ class Sudoku:
 
     @staticmethod
     def __exclude_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
-        is_any_cell_solved = False  # флаг что хоть одна клетка решена
+        is_any_cell_solved = False
         for batch in grid_view:
-            twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))  # формируем словарь альтернативы в пачке(строка, столбец или квадрант):количество таких альтернатив в пачке
+            twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))
             for alternatives in twin_alternatives_counter:
-                if len(alternatives) == twin_alternatives_counter[alternatives]:  # ищем множество для исключения (альтернативы длинной N в количестве N в одной пачке)
+                if len(alternatives) == twin_alternatives_counter[alternatives]:
                     for n in range(9):
                         if not batch[n].is_solved and batch[n].alternatives != alternatives:
                             batch[n].exclude(alternatives)
@@ -60,7 +62,7 @@ class Sudoku:
         return is_any_cell_solved
 
     def solve(self) -> None:
-        if not self.__is_valid():                           # если грид не удовлетворяет правилам судоку - поднимаем ошибку
+        if not self.__is_valid():
             raise ValueError('Sudoku rules are violated')
         while True:
             logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
@@ -95,11 +97,11 @@ class Sudoku:
         return self.__squares[3*(i//3) + j//3]
 
     @staticmethod
-    def __is_valid_cell_sequence(cell_sequence: Sequence[Cell]) -> bool:    # проверка что в "пачке" нет повторяющихся значений
+    def __is_valid_cell_sequence(cell_sequence: Sequence[Cell]) -> bool:
         value_list = [cell.value for cell in cell_sequence if cell.value is not None]
         return len(value_list) == len(set(value_list))
 
-    def __is_valid(self) -> bool:         # проверка на выполнение правил судоку (нет повторяющихся значений в строках, столбцах, квадрантах)
+    def __is_valid(self) -> bool:
         for grid_view in (self.__rows, self.__columns, self.__squares):
             for item in grid_view:
                 if not self.__is_valid_cell_sequence(item):

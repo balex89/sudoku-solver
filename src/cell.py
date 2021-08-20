@@ -11,15 +11,15 @@ class CellStateException(Exception):
 class Cell:
     VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
-    def __init__(self, init_value: CellValue = None) -> None:                      # инициализация объекта класса
+    def __init__(self, init_value: CellValue = None) -> None:
         if init_value in self.VALID_VALUES:
             self.__value = init_value
             self.__alternatives: set[CellValue] = (set() if init_value is not None
-                                                   else {1, 2, 3, 4, 5, 6, 7, 8, 9})    # если init_value число, то множество альтернатив пустое, клетка решена
+                                                   else {1, 2, 3, 4, 5, 6, 7, 8, 9})
         else:
             raise ValueError('Incorrect value')
 
-    def __eq__(self, other):                                                      # сравнение объектов класса
+    def __eq__(self, other):
         return self.__value == other.__value
 
     @property
@@ -36,15 +36,15 @@ class Cell:
 
     @value.setter
     def value(self, new_value):
-        if new_value in self.__alternatives:                                       # если аргумент есть в cписке возможных вариантов
-            self.exclude(self.__alternatives.difference({new_value}))              # исключаем из списка возможных вариантов все, кроме нового значения
+        if new_value in self.__alternatives:
+            self.exclude(self.__alternatives.difference({new_value}))
         else:
             raise ValueError('Incorrect value')
 
     def exclude(self, exclude_digitals: Union['Cell', CellValue,
-                                              Iterable[Union['Cell', CellValue]]]) -> None:     # исключение цифр из аргумента из множества альтернатив
-        if len(self.__alternatives) > 0:                                # что-то делаем, если множество альтернатив не пустое
-            if isinstance(exclude_digitals, Iterable):                  # формируем множество для исключения (exclude_set) в зависимоти от аргумента (Iterable или нет)
+                                              Iterable[Union['Cell', CellValue]]]) -> None:
+        if len(self.__alternatives) > 0:
+            if isinstance(exclude_digitals, Iterable):
                 exclude_set = set()
                 for item in exclude_digitals:
                     if isinstance(item, Cell):
@@ -58,12 +58,12 @@ class Cell:
             else:
                 raise ValueError('Incorrect value')
 
-            result_alternatives = self.__alternatives.difference(exclude_set)                # result_alternatives - разность текущего множества альтернатив и множетсва для исключения
+            result_alternatives = self.__alternatives.difference(exclude_set)
 
-            if len(result_alternatives) == 0:                                                # если множество альтернатив опустошается до решения:
-                raise CellStateException('Empty alternatives before solution')               # вызов исключения
+            if len(result_alternatives) == 0:
+                raise CellStateException('Empty alternatives before solution')
             else:
-                self.__alternatives = result_alternatives                                 # если нет, то исключаем из множества альтернатив exclude_set
+                self.__alternatives = result_alternatives
 
             if len(self.__alternatives) == 1:
-                self.__value = self.__alternatives.pop()      # если после исключения осталась единственная альтернатива - присваиваем оставшееся возможное значение __value , и очищаем множество альтернатив
+                self.__value = self.__alternatives.pop()

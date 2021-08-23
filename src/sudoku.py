@@ -23,12 +23,18 @@ class Sudoku:
     def __init__(self, grid: Grid) -> None:
         if not is_valid_grid(grid):
             raise ValueError('Incorrect grid. Expected grid 9x9')
-        self.__rows = [[Cell(item) for item in row] for row in grid]
+
+        def set_flag_true(self):
+            print("set_flag_true")
+            self.__any_alternatives_excluded = True
+
+        self.__rows = [[Cell(item, set_flag_true) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
         self.__squares = []
         for i, j in product((0, 3, 6), (0, 3, 6)):
             self.__squares.append([self.__rows[x][y] for x in range(i, i+3) for y in range(j, j+3)])
         self._speculation_depth = 0
+        self.__any_alternatives_excluded = False
 
     @staticmethod
     def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
@@ -76,17 +82,18 @@ class Sudoku:
                     self.__rows[i][j].exclude(self.__columns[j])
                     self.__rows[i][j].exclude(self.__get_square(i, j))
                     is_any_cell_solved |= self.__rows[i][j].is_solved
-            if not is_any_cell_solved:
-                logger.debug("Using Exclude Equal Alternatives method...")
-                for grid_view in [self.__rows, self.__columns, self.__squares]:
-                    is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved:
-                logger.debug("Using Leave Equal Alternatives method...")
-                for grid_view in [self.__rows, self.__columns, self.__squares]:
-                    is_any_cell_solved |= self.__leave_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
-                is_any_cell_solved |= self.__exclude_violating_alternative()
-            if not is_any_cell_solved:
+            # if not self.discard_progress_flag():
+            #     logger.debug("Using Exclude Equal Alternatives method...")
+            #     for grid_view in [self.__rows, self.__columns, self.__squares]:
+            #         is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
+            # if not self.discard_progress_flag():
+            #     logger.debug("Using Leave Equal Alternatives method...")
+            #     for grid_view in [self.__rows, self.__columns, self.__squares]:
+            #         is_any_cell_solved |= self.__leave_equal_alternatives(grid_view)
+            # if not self.discard_progress_flag() and self._speculation_depth <= MAX_SPECULATION_DEPTH:
+            #     is_any_cell_solved |= self.__exclude_violating_alternative()
+
+            if not self.discard_progress_flag():
                 break
             logger.debug("Some new cells are solved")
 
@@ -126,3 +133,8 @@ class Sudoku:
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
         return False
+
+    def discard_progress_flag(self):
+        result = self.__any_alternatives_excluded
+        self.__any_alternatives_excluded = False
+        return result

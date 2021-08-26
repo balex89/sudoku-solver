@@ -11,7 +11,10 @@ class CellStateException(Exception):
 class Cell:
     VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
-    def __init__(self, init_value: CellValue = None, callback=None) -> None:
+    def do_nothing():
+        pass
+
+    def __init__(self, init_value: CellValue = None, callback=do_nothing) -> None:
         if init_value in self.VALID_VALUES:
             self.callback = callback
             self.__value = init_value
@@ -68,7 +71,7 @@ class Cell:
                 self.__alternatives = result_alternatives
                 if len_current_alternatives != len(self.__alternatives):
                     if self.callback is not None:
-                        self.callback
+                        self.callback()
 
             if len(self.__alternatives) == 1:
                 self.__value = self.__alternatives.pop()

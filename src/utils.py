@@ -81,6 +81,6 @@ def draw_grid(grid: Grid, i: CellValue = None, j: CellValue = None):
     if i is None or j is None:
         fillers = (" " for _ in range(81))
     else:
-        fillers = (">" if k == i*9 + j else " " for k in range(81))
+        fillers = (">" if k == i * 9 + j else " " for k in range(81))
     values = (v if v is not None else " " for v in itertools.chain(*grid))
     return GRID_PATTERN.format(*itertools.chain(*zip(fillers, values)))

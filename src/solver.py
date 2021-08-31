@@ -20,7 +20,7 @@ def solve_file(file_path: Path) -> None:
     sud = Sudoku(utils.read_grid_from_file(file_path))
     sud.solve()
     logger.info("Sudoku solved")
-    new_file_name = os.path.splitext(file_path)[0]+"-solution"+os.path.splitext(file_path)[1]
+    new_file_name = os.path.splitext(file_path)[0] + "-solution" + os.path.splitext(file_path)[1]
     logger.info("Writing solution to %s", new_file_name)
     utils.write_grid_to_file(sud.get_grid(), new_file_name)
 

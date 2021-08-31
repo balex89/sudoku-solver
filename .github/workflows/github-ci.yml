@@ -25,6 +25,7 @@ jobs:
           flake8 . --count --select=C901 --exit-zero --max-complexity=10 --statistics
 
   test:
+    needs: check-pep8
 
     runs-on: ubuntu-latest
 

@@ -49,27 +49,27 @@ HARD_SOLUTION = [
 ]
 
 HARD_TASK_2 = [
-  [None, 6, None, None, 1, None, None, 8, 2],
-  [8, None, 3, None, None, None, 7, 6, 4],
-  [None, None, None, None, None, None, None, None, None],
-  [None, None, None, None, None, None, None, None, None],
-  [2, None, None, None, None, 6, None, None, 7],
-  [None, 7, 8, None, None, 1, 2, None, None],
-  [None, None, 1, None, None, None, None, None, 8],
-  [3, 2, None, None, None, None, 9, 7, None],
-  [None, None, 9, 2, 4, None, None, None, 1],
+    [None, 6, None, None, 1, None, None, 8, 2],
+    [8, None, 3, None, None, None, 7, 6, 4],
+    [None, None, None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None, None, None],
+    [2, None, None, None, None, 6, None, None, 7],
+    [None, 7, 8, None, None, 1, 2, None, None],
+    [None, None, 1, None, None, None, None, None, 8],
+    [3, 2, None, None, None, None, 9, 7, None],
+    [None, None, 9, 2, 4, None, None, None, 1],
 ]
 
 HARD_TASK_SOLUTION_2 = [
-  [9, 6, 7, 4, 1, 3, 5, 8, 2],
-  [8, 1, 3, 9, 5, 2, 7, 6, 4],
-  [5, 4, 2, 6, 8, 7, 3, 1, 9],
-  [1, 9, 6, 7, 2, 4, 8, 5, 3],
-  [2, 3, 5, 8, 9, 6, 1, 4, 7],
-  [4, 7, 8, 5, 3, 1, 2, 9, 6],
-  [6, 5, 1, 3, 7, 9, 4, 2, 8],
-  [3, 2, 4, 1, 6, 8, 9, 7, 5],
-  [7, 8, 9, 2, 4, 5, 6, 3, 1]
+    [9, 6, 7, 4, 1, 3, 5, 8, 2],
+    [8, 1, 3, 9, 5, 2, 7, 6, 4],
+    [5, 4, 2, 6, 8, 7, 3, 1, 9],
+    [1, 9, 6, 7, 2, 4, 8, 5, 3],
+    [2, 3, 5, 8, 9, 6, 1, 4, 7],
+    [4, 7, 8, 5, 3, 1, 2, 9, 6],
+    [6, 5, 1, 3, 7, 9, 4, 2, 8],
+    [3, 2, 4, 1, 6, 8, 9, 7, 5],
+    [7, 8, 9, 2, 4, 5, 6, 3, 1]
 ]
 
 HARD_TASK_3 = [

@@ -86,7 +86,7 @@ def test_LEA():
         {1, 3},
         {6, 8},
         {3, 8}
-      ]
+    ]
 
     LEA_1ST_ROW_SOLUTION = [
         {1, 2},
@@ -98,7 +98,7 @@ def test_LEA():
         {1, 3},
         {6, 8},
         {3, 8}
-      ]
+    ]
 
     grid_view = [
         [

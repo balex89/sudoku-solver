@@ -27,7 +27,7 @@ def solve():
 
     logger.info("Initializing sudoku...")
     sudoku = Sudoku(grid)
-    logger.info("Sudoku initialized: %s",  draw_grid(grid))
+    logger.info("Sudoku initialized: %s", draw_grid(grid))
 
     logger.info("Try to solve sudoku")
     sudoku.solve()

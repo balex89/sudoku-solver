@@ -114,3 +114,9 @@ def test_LEA():
         grid_view[i][j]._Cell__alternatives == {1, 2, 3, 4, 5, 6, 7, 8, 9}
         for j in range(9) for i in range(1, 9)
     )
+
+
+def test_sudoku_build_grid():
+    sudoku = Sudoku(Sudoku.build_grid())
+    assert sudoku._Sudoku__is_valid()
+    assert sudoku.is_solved

@@ -1,8 +1,10 @@
 from itertools import product
 from collections import Counter
+import random
 from typing import Sequence
 import copy
 import logging
+
 
 from cell import Cell, CellStateException
 from utils import is_valid_grid, draw_grid
@@ -20,7 +22,7 @@ class InvalidSudokuException(Exception):
 
 class Sudoku:
 
-    def __init__(self, grid: Grid) -> None:
+    def __init__(self, grid: Grid = [[None for i in range(9)] for j in range(9)]) -> None:
         if not is_valid_grid(grid):
             raise ValueError('Incorrect grid. Expected grid 9x9')
         self.__rows = [[Cell(item) for item in row] for row in grid]
@@ -128,3 +130,28 @@ class Sudoku:
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
         return False
+
+    @staticmethod
+    def build_grid():
+        grids = [Sudoku()]
+        i = 1
+        while i < 10:
+            grids.append(Sudoku(grids[i-1].get_grid()))
+            for row in grids[i].__rows:
+                cell_is_defined = False
+                cell_indexes = random.sample(range(9), 9)
+                for k in cell_indexes:
+                    if not row[k].is_solved:
+                        row[k]._Cell__value = i
+                        if grids[i].__is_valid():
+                            cell_is_defined = True
+                            break
+                        else:
+                            row[k]._Cell__value = None
+                if not cell_is_defined:
+                    grids.pop()
+                    grids.pop()
+                    i -= 2
+                    break
+            i += 1
+        return grids[9].get_grid()

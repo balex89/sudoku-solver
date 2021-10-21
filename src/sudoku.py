@@ -136,7 +136,7 @@ class Sudoku:
         grids = [Sudoku()]
         i = 1
         while i < 10:
-            grids.append(Sudoku(grids[i-1].get_grid()))
+            grids.append(Sudoku(grids[i - 1].get_grid()))
             for row in grids[i].__rows:
                 cell_is_defined = False
                 cell_indexes = random.sample(range(9), 9)

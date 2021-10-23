@@ -23,10 +23,11 @@ class Sudoku:
 
     def __init__(self, grid: Grid = None) -> None:
         if grid is None:
-            grid = [[None for i in range(9)] for j in range(9)]
-        if not is_valid_grid(grid):
+            self.__rows = [[Cell() for i in range(9)] for j in range(9)]
+        elif not is_valid_grid(grid):
             raise ValueError('Incorrect grid. Expected grid 9x9')
-        self.__rows = [[Cell(item) for item in row] for row in grid]
+        else:
+            self.__rows = [[Cell(item) for item in row] for row in grid]
         self.__columns = [[self.__rows[j][i] for j in range(9)] for i in range(9)]
         self.__squares = []
         for i, j in product((0, 3, 6), (0, 3, 6)):
@@ -134,23 +135,23 @@ class Sudoku:
 
     @staticmethod
     def build_grid():
-        grids = [Sudoku()]
+        sudokus = [Sudoku()]
         i = 1
         while i < 10:
-            grids.append(copy.deepcopy(grids[i - 1]))
-            for row in grids[i].__rows:
+            sudokus.append(copy.deepcopy(sudokus[i - 1]))
+            for row in sudokus[i].__rows:
                 cell_indexes = random.sample(range(9), 9)
                 for k in cell_indexes:
                     if not row[k].is_solved:
                         row[k].value = i
-                        if grids[i]._is_valid():
+                        if sudokus[i]._is_valid():
                             break
                         else:
                             row[k].value = None
                 else:
-                    grids.pop()
-                    grids.pop()
+                    sudokus.pop()
+                    sudokus.pop()
                     i -= 2
                     break
             i += 1
-        return grids[9].get_grid()
+        return sudokus[9].get_grid()

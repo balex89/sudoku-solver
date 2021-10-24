@@ -17,7 +17,7 @@ class Cell:
             self.__alternatives: set[CellValue] = (set() if init_value is not None
                                                    else {1, 2, 3, 4, 5, 6, 7, 8, 9})
         else:
-            raise ValueError('Incorrect value')
+            raise ValueError('Incorrect value', init_value)
 
     def __eq__(self, other):
         return self.__value == other.__value
@@ -38,8 +38,10 @@ class Cell:
     def value(self, new_value):
         if new_value in self.__alternatives:
             self.exclude(self.__alternatives.difference({new_value}))
+        elif new_value is None:
+            self.__init__()
         else:
-            raise ValueError('Incorrect value')
+            raise ValueError('Incorrect value', new_value)
 
     def exclude(self, exclude_digitals: Union['Cell', CellValue,
                                               Iterable[Union['Cell', CellValue]]]) -> None:

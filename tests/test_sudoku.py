@@ -1,8 +1,9 @@
+import random
 from sudoku import Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
                        HARD_TASK_2, HARD_TASK_SOLUTION_2, HARD_TASK_3,
-                       HARD_TASK_SOLUTION_3)
+                       HARD_TASK_SOLUTION_3, BUILD_GRID_SOLUTION)
 
 
 def test_sudoku_solver_easy_task():
@@ -114,3 +115,9 @@ def test_LEA():
         grid_view[i][j]._Cell__alternatives == {1, 2, 3, 4, 5, 6, 7, 8, 9}
         for j in range(9) for i in range(1, 9)
     )
+
+
+def test_sudoku_build_grid():
+    random.seed(10)
+    sudoku = Sudoku(Sudoku.build_grid())
+    assert sudoku.get_grid() == BUILD_GRID_SOLUTION

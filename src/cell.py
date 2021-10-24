@@ -39,8 +39,7 @@ class Cell:
         if new_value in self.__alternatives:
             self.exclude(self.__alternatives.difference({new_value}))
         elif new_value is None:
-            self.__value = None
-            self.__alternatives = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+            self.__init__()
         else:
             raise ValueError('Incorrect value', new_value)
 

@@ -3,7 +3,7 @@ from sudoku import Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
                        HARD_TASK_2, HARD_TASK_SOLUTION_2, HARD_TASK_3,
-                       HARD_TASK_SOLUTION_3, BUILD_GRID_SOLUTION)
+                       HARD_TASK_SOLUTION_3, BUILD_GRID_SOLUTION, TASK_GRID)
 
 
 def test_sudoku_solver_easy_task():
@@ -121,3 +121,9 @@ def test_sudoku_build_grid():
     random.seed(10)
     sudoku = Sudoku(Sudoku.build_grid())
     assert sudoku.get_grid() == BUILD_GRID_SOLUTION
+
+
+def test_sudoku_get_task():
+    random.seed(10)
+    sudoku = Sudoku(Sudoku.get_task())
+    assert sudoku.get_grid() == TASK_GRID

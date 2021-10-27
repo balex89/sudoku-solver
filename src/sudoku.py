@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import product, takewhile
 from collections import Counter
 import random
 from typing import Sequence
@@ -155,3 +155,21 @@ class Sudoku:
                     break
             i += 1
         return sudokus[9].get_grid()
+
+    @staticmethod
+    def get_task():
+        cell_indexes = random.sample(range(81), 81)
+        task = Sudoku(Sudoku.build_grid())
+        for index in cell_indexes:
+            i = index // 9
+            j = index % 9
+            current_cell_copy = copy.deepcopy(task.__rows[i][j])
+            task.__rows[i][j].value = None
+            task_copy = copy.deepcopy(task)
+            try:
+                task_copy.solve()
+            except(Exception):
+                pass
+            if not task_copy.is_solved:
+                task.__rows[i][j] = copy.deepcopy(current_cell_copy)
+        return task.get_grid()

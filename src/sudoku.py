@@ -1,4 +1,4 @@
-from itertools import product, takewhile
+from itertools import product
 from collections import Counter
 import random
 from typing import Sequence

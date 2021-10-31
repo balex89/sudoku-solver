@@ -12,7 +12,7 @@ from type_aliases import Grid
 logger = logging.getLogger(__name__)
 
 EVA_MAX_ALTERNATIVES_NUMBER = 2
-MAX_SPECULATION_DEPTH = 4
+MAX_SPECULATION_DEPTH = 2
 
 
 class InvalidSudokuException(Exception):
@@ -128,7 +128,7 @@ class Sudoku:
                     sudoku_copy.__rows[i][j].value = alternatives.pop()
                     try:
                         sudoku_copy.solve()
-                    except (InvalidSudokuException, CellStateException):
+                    except (Exception):
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
         return False
@@ -156,20 +156,24 @@ class Sudoku:
             i += 1
         return sudokus[9].get_grid()
 
-    @staticmethod
-    def get_task():
-        cell_indexes = random.sample(range(81), 81)
-        task = Sudoku(Sudoku.build_grid())
-        for index in cell_indexes:
+    @classmethod
+    def get_task(self):
+        task = Sudoku.build_grid()
+        step = 0
+        for index in random.sample(range(81), 81):
             i = index // 9
             j = index % 9
-            current_cell_copy = copy.deepcopy(task.__rows[i][j])
-            task.__rows[i][j].value = None
-            task_copy = copy.deepcopy(task)
+            current_cell_copy = task[i][j]
+            task[i][j] = None
+            step += 1
+            print("step ", step, "Cell[", i, "][", j, "]")
+            for z in range(9):
+                print(task[z])
+            sudoku = Sudoku(task)
             try:
-                task_copy.solve()
-            except(Exception):
+                sudoku.solve()
+            except(InvalidSudokuException, CellStateException):
                 pass
-            if not task_copy.is_solved:
-                task.__rows[i][j] = copy.deepcopy(current_cell_copy)
-        return task.get_grid()
+            if not sudoku.is_solved:
+                task[i][j] = current_cell_copy
+        return task

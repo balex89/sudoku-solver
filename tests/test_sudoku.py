@@ -1,4 +1,7 @@
 import random
+
+import pytest
+
 from sudoku import Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
@@ -121,3 +124,22 @@ def test_sudoku_build_grid():
     random.seed(10)
     sudoku = Sudoku(Sudoku.build_grid())
     assert sudoku.get_grid() == BUILD_GRID_SOLUTION
+
+
+@pytest.mark.xfail(reason="Alternative exclusion bug")
+def test_valid_solution():
+    _ = None
+    grid = [
+        [_, 9, _, 4, _, _, _, _, _],
+        [3, _, _, _, _, _, _, 7, _],
+        [4, _, _, 8, _, 9, 2, 5, _],
+        [_, _, 8, _, 1, 6, _, _, 5],
+        [_, 3, 4, 2, _, _, _, _, 6],
+        [_, _, _, _, _, _, _, _, _],
+        [_, _, _, _, 4, 5, 1, _, 9],
+        [_, _, _, 1, 7, _, _, _, _],
+        [_, 6, _, _, _, _, _, _, _],
+    ]
+    sudoku = Sudoku(grid)
+    sudoku.solve()
+    assert sudoku._is_valid() is True

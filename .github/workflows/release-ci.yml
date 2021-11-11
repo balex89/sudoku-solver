@@ -1,8 +1,8 @@
 name: Release publish GitHub CI
 
-on: push
-#  release:
-#    types: [published]
+on:
+  release:
+    types: [published]
 
 jobs:
   docker-build:

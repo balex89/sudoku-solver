@@ -64,3 +64,21 @@ jobs:
           context: .
           push: true
           tags: kalinbob/sudoku-solver:latest
+
+  deploy:
+
+    needs: docker-build
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Docker pull and run
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VM_HOST }}
+        username: ${{ secrets.VM_USERNAME }}
+        key: ${{ secrets.VM_KEY }}
+        script: |
+          docker rm -f sudoku-solver
+          docker pull kalinbob/sudoku-solver:latest
+          docker run --name=sudoku-solver -d -p 5000:5000 kalinbob/sudoku-solver:latest

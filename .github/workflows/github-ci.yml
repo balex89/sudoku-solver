@@ -69,7 +69,7 @@ jobs:
           tags: ${{ env.REPO }}:latest
 
   deploy:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
     needs: docker-build
 

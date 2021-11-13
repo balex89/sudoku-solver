@@ -1,5 +1,8 @@
 name: Release publish GitHub CI
 
+env:
+  REPO: kalinbob/sudoku-solver
+
 on:
   release:
     types: [published]
@@ -22,4 +25,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: kalinbob/sudoku-solver:${{ github.ref_name }}
+          tags: ${{ env.REPO }}:${{ github.ref_name }}

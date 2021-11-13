@@ -1,7 +1,10 @@
 name: GitHub CI
 
 on: [push, pull_request]
-  
+
+env:
+  REPO: kalinbob/sudoku-solver
+
 jobs:
 
   check-pep8:
@@ -44,7 +47,7 @@ jobs:
         python -m pytest -v
 
   docker-build:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' }}
 
     needs: test
 
@@ -63,23 +66,30 @@ jobs:
         with:
           context: .
           push: true
-          tags: kalinbob/sudoku-solver:latest
+          tags: ${{ env.REPO }}:latest
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    if: ${{ github.event_name == 'push' }}
 
     needs: docker-build
 
     runs-on: ubuntu-latest
 
+    env:
+      APP_NAME: sudoku-solver
+      LOG_MOUNT_PATH: /app/logs
+      HOST_LOG_PATH: /kalinbob/logs
+
     steps:
     - name: Docker pull and run
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v0.1.4
       with:
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USERNAME }}
         key: ${{ secrets.VM_KEY }}
         script: |
-          docker rm -f sudoku-solver
-          docker pull kalinbob/sudoku-solver:latest
-          docker run --name=sudoku-solver -d -p 5000:5000 kalinbob/sudoku-solver:latest
+          docker rm -f ${{ env.APP_NAME }}
+          docker pull ${{ env.REPO }}:latest
+          docker run --name=${{ env.APP_NAME }} -d -p 5000:5000 \
+            -v ${{ env.HOST_LOG_PATH }}/${{ env.APP_NAME }}:${{ env.LOG_MOUNT_PATH }} \
+            ${{ env.REPO }}:latest

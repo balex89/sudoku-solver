@@ -2,7 +2,6 @@ from itertools import product
 from collections import Counter
 import random
 from typing import Sequence
-import copy
 import logging
 
 from cell import Cell, CellStateException, ValueOutOfCellAlternativesException

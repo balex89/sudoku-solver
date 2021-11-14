@@ -8,11 +8,19 @@ class CellStateException(Exception):
     pass
 
 
+class ValueOutOfCellAlternativesException(Exception):
+    pass
+
+
 class Cell:
     VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
-    def __init__(self, init_value: CellValue = None) -> None:
+    def do_nothing():
+        pass
+
+    def __init__(self, init_value: CellValue = None, callback=do_nothing) -> None:
         if init_value in self.VALID_VALUES:
+            self.callback = callback
             self.__value = init_value
             self.__alternatives: set[CellValue] = (set() if init_value is not None
                                                    else {1, 2, 3, 4, 5, 6, 7, 8, 9})
@@ -41,7 +49,7 @@ class Cell:
         elif new_value is None:
             self.__init__()
         else:
-            raise ValueError('Incorrect value', new_value)
+            raise ValueOutOfCellAlternativesException('Incorrect value', new_value)
 
     def exclude(self, exclude_digitals: Union['Cell', CellValue,
                                               Iterable[Union['Cell', CellValue]]]) -> None:
@@ -69,3 +77,4 @@ class Cell:
 
             if len(self.__alternatives) == 1:
                 self.__value = self.__alternatives.pop()
+                self.callback()

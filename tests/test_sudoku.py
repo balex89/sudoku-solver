@@ -126,7 +126,7 @@ def test_sudoku_build_grid():
     assert sudoku.get_grid() == BUILD_GRID_SOLUTION
 
 
-@pytest.mark.skip(reason="Alternative exclusion bug")
+@pytest.mark.skip(reason="Recursion calls take too much time")
 def test_valid_solution():
     _ = None
     grid = [

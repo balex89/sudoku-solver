@@ -18,7 +18,7 @@ class Cell:
     def do_nothing():
         pass
 
-    def __init__(self, init_value: CellValue = None, callback=do_nothing) -> None:
+    def __init__(self, init_value: CellValue = None, callback=lambda: None) -> None:
         if init_value in self.VALID_VALUES:
             self.callback = callback
             self.__value = init_value

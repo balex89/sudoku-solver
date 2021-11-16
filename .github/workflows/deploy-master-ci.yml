@@ -1,6 +1,9 @@
-name: GitHub CI
+name: GitHub deploy master workflow
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
 
 env:
   REPO: kalinbob/sudoku-solver
@@ -47,7 +50,6 @@ jobs:
         python -m pytest -v
 
   docker-build:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
     needs: test
 
@@ -69,7 +71,6 @@ jobs:
           tags: ${{ env.REPO }}:latest
 
   deploy:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
     needs: docker-build
 

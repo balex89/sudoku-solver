@@ -71,7 +71,7 @@ curl -X POST http://localhost:5000/v1/solve -H "Content-type:application/json" -
 ```
 
 Normal response data is JSON:
-```json
+```
 {"status": "ok", "grid": <UPDATED_GRID>}
 ```
 

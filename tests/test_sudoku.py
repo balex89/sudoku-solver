@@ -1,4 +1,7 @@
 import random
+
+import pytest
+
 from sudoku import Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
@@ -121,6 +124,25 @@ def test_sudoku_build_grid():
     random.seed(10)
     sudoku = Sudoku(Sudoku.build_grid())
     assert sudoku.get_grid() == BUILD_GRID_SOLUTION
+
+
+@pytest.mark.skip(reason="Recursion calls take too much time")
+def test_valid_solution():
+    _ = None
+    grid = [
+        [_, 9, _, 4, 3, 7, _, _, _],
+        [3, 8, 6, 5, 2, 1, 9, 7, 4],
+        [4, 1, 7, 8, 6, 9, 2, 5, 3],
+        [_, _, 8, _, 1, 6, _, _, 5],
+        [_, 3, 4, 2, 5, 8, 7, _, 6],
+        [6, 5, _, _, 9, 4, _, _, _],
+        [_, _, _, 6, 4, 5, 1, _, 9],
+        [_, 4, _, 1, 7, _, _, _, _],
+        [_, 6, _, 9, 8, _, _, _, _],
+    ]
+    sudoku = Sudoku(grid)
+    sudoku.solve()
+    assert sudoku._is_valid() is True
 
 
 def test_sudoku_get_task():

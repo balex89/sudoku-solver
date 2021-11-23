@@ -15,9 +15,6 @@ class ValueOutOfCellAlternativesException(Exception):
 class Cell:
     VALID_VALUES = frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, None})
 
-    def do_nothing():
-        pass
-
     def __init__(self, init_value: CellValue = None, callback=lambda: None) -> None:
         if init_value in self.VALID_VALUES:
             self.callback = callback

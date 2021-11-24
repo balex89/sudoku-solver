@@ -4,7 +4,7 @@ import random
 from typing import Sequence
 import logging
 
-from cell import Cell, CellStateException, ValueOutOfCellAlternativesException
+from cell import Cell, ValueOutOfCellAlternativesException
 from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
 

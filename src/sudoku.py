@@ -11,7 +11,8 @@ from type_aliases import Grid
 logger = logging.getLogger(__name__)
 
 EVA_MAX_ALTERNATIVES_NUMBER = 2
-MAX_SPECULATION_DEPTH = 2
+MAX_SPECULATION_DEPTH = 4
+SPECULATION_DEPTH_FOR_TASK = -1
 
 
 class InvalidSudokuException(Exception):
@@ -79,7 +80,7 @@ class Sudoku:
                     break
         return is_any_cell_solved
 
-    def solve(self) -> None:
+    def solve(self, speculation_depth=MAX_SPECULATION_DEPTH) -> None:
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
@@ -102,7 +103,7 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
+            if not is_any_cell_solved and self._speculation_depth <= speculation_depth:
                 logger.debug("Using Exclude Violating Alternatives method...")
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
@@ -173,21 +174,13 @@ class Sudoku:
     @classmethod
     def get_task(self):
         task = Sudoku.build_grid()
-        step = 0
         for index in random.sample(range(81), 81):
             i = index // 9
             j = index % 9
             current_cell_copy = task[i][j]
             task[i][j] = None
-            step += 1
-            print("step ", step, "Cell[", i, "][", j, "]")
-            for z in range(9):
-                print(task[z])
             sudoku = Sudoku(task)
-            try:
-                sudoku.solve()
-            except(InvalidSudokuException, CellStateException):
-                pass
+            sudoku.solve(SPECULATION_DEPTH_FOR_TASK)
             if not sudoku.is_solved:
                 task[i][j] = current_cell_copy
         return task

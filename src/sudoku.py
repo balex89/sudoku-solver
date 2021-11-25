@@ -4,7 +4,7 @@ import random
 from typing import Sequence
 import logging
 
-from cell import Cell, ValueOutOfCellAlternativesException
+from cell import Cell,CellStateException, ValueOutOfCellAlternativesException
 from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
 
@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 EVA_MAX_ALTERNATIVES_NUMBER = 2
 MAX_SPECULATION_DEPTH = 4
-SPECULATION_DEPTH_FOR_TASK = -1
 
 
 class InvalidSudokuException(Exception):
@@ -142,7 +141,7 @@ class Sudoku:
                     sudoku_copy.__rows[i][j].value = alternatives.pop()
                     try:
                         sudoku_copy.solve()
-                    except (Exception):
+                    except (InvalidSudokuException, CellStateException):
                         self.__rows[i][j].exclude(sudoku_copy.__rows[i][j].value)
                         return True
         return False
@@ -172,15 +171,15 @@ class Sudoku:
         return sudokus[9].get_grid()
 
     @classmethod
-    def get_task(self):
+    def get_task(self, speculation_depth):
         task = Sudoku.build_grid()
         for index in random.sample(range(81), 81):
             i = index // 9
             j = index % 9
-            current_cell_copy = task[i][j]
+            true_cell_value = task[i][j]
             task[i][j] = None
             sudoku = Sudoku(task)
-            sudoku.solve(SPECULATION_DEPTH_FOR_TASK)
+            sudoku.solve(speculation_depth)
             if not sudoku.is_solved:
-                task[i][j] = current_cell_copy
+                task[i][j] = true_cell_value
         return task

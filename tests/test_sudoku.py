@@ -147,4 +147,4 @@ def test_valid_solution():
 
 def test_sudoku_get_task():
     random.seed(10)
-    assert Sudoku.get_task() == TASK_GRID
+    assert Sudoku.get_task(-1) == TASK_GRID

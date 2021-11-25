@@ -79,7 +79,7 @@ class Sudoku:
                     break
         return is_any_cell_solved
 
-    def solve(self) -> None:
+    def solve(self, speculation_depth=MAX_SPECULATION_DEPTH) -> None:
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
@@ -102,7 +102,7 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= MAX_SPECULATION_DEPTH:
+            if not is_any_cell_solved and self._speculation_depth <= speculation_depth:
                 logger.debug("Using Exclude Violating Alternatives method...")
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
@@ -169,3 +169,17 @@ class Sudoku:
                     break
             i += 1
         return sudokus[9].get_grid()
+
+    @classmethod
+    def get_task(self, speculation_depth):
+        task = Sudoku.build_grid()
+        for index in random.sample(range(81), 81):
+            i = index // 9
+            j = index % 9
+            true_cell_value = task[i][j]
+            task[i][j] = None
+            sudoku = Sudoku(task)
+            sudoku.solve(speculation_depth)
+            if not sudoku.is_solved:
+                task[i][j] = true_cell_value
+        return task

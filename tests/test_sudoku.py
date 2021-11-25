@@ -6,7 +6,7 @@ from sudoku import Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
                        HARD_TASK_2, HARD_TASK_SOLUTION_2, HARD_TASK_3,
-                       HARD_TASK_SOLUTION_3, BUILD_GRID_SOLUTION)
+                       HARD_TASK_SOLUTION_3, BUILD_GRID_SOLUTION, TASK_GRID)
 
 
 def test_sudoku_solver_easy_task():
@@ -143,3 +143,8 @@ def test_valid_solution():
     sudoku = Sudoku(grid)
     sudoku.solve()
     assert sudoku._is_valid() is True
+
+
+def test_sudoku_get_task():
+    random.seed(10)
+    assert Sudoku.get_task(-1) == TASK_GRID

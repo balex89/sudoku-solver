@@ -37,6 +37,15 @@ def solve():
     return jsonify(status="ok", grid=solution)
 
 
+@app.route("/get_task", methods=["GET"])
+def get_task():
+    logger.info("Generation task...")
+    task = Sudoku.get_task(-1)
+    logger.info("Task generated!")
+    logger.info("Returning task: %s", draw_grid(task))
+    return jsonify(status="ok", grid=task)
+
+
 @app.errorhandler(400)
 def handle_bad_request(e):
     logger.exception("Bad request")

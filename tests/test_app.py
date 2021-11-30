@@ -1,8 +1,6 @@
 import json
 import random
 
-from werkzeug.wrappers import response
-
 from resources import EASY_TASK, EASY_SOLUTION, TASK_GRID
 
 
@@ -33,6 +31,7 @@ def test_get_task(client):
     random.seed(10)
     mimetype = "application/json"
     response = client.get("/get_task")
+
     assert response.status_code == 200
     assert response.mimetype == mimetype
     assert response.json.get("grid") == TASK_GRID

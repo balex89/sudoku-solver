@@ -30,7 +30,7 @@ def test_solve(client):
 def test_get_task(client):
     random.seed(10)
     mimetype = "application/json"
-    response = client.get("/get_task")
+    response = client.get("/v1/get_task")
 
     assert response.status_code == 200
     assert response.mimetype == mimetype

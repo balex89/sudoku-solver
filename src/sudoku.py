@@ -171,14 +171,14 @@ class Sudoku:
         return sudokus[9].get_grid()
 
     @classmethod
-    def get_task(self, speculation_depth):
-        task = Sudoku.build_grid()
+    def get_task(cls, speculation_depth):
+        task = cls.build_grid()
         for index in random.sample(range(81), 81):
             i = index // 9
             j = index % 9
             true_cell_value = task[i][j]
             task[i][j] = None
-            sudoku = Sudoku(task)
+            sudoku = cls(task)
             sudoku.solve(speculation_depth)
             if not sudoku.is_solved:
                 task[i][j] = true_cell_value

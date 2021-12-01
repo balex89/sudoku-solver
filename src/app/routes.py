@@ -37,7 +37,7 @@ def solve():
     return jsonify(status="ok", grid=solution)
 
 
-@app.route("/get_task", methods=["GET"])
+@app.route("/v1/get_task", methods=["GET"])
 def get_task():
     logger.info("Generating task...")
     task = Sudoku.get_task(-1)

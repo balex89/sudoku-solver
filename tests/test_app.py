@@ -1,6 +1,7 @@
 import json
+import random
 
-from resources import EASY_TASK, EASY_SOLUTION
+from resources import EASY_TASK, EASY_SOLUTION, TASK_GRID
 
 
 def test_health(client):
@@ -24,3 +25,13 @@ def test_solve(client):
     assert response.status_code == 200
     assert response.mimetype == mimetype
     assert response.json.get("grid") == EASY_SOLUTION
+
+
+def test_get_task(client):
+    random.seed(10)
+    mimetype = "application/json"
+    response = client.get("/v1/get_task")
+
+    assert response.status_code == 200
+    assert response.mimetype == mimetype
+    assert response.json.get("grid") == TASK_GRID

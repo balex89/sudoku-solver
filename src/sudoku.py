@@ -27,7 +27,7 @@ class Sudoku:
                 if not cell.is_solved:
                     cell.exclude(self.__rows[i][j].value)
 
-    def __init__(self, grid: Grid = None) -> None:
+    def __init__(self, grid: Grid = None, _max_speculation_depth=MAX_SPECULATION_DEPTH) -> None:
 
         def factory(i, j):
             def callback():
@@ -47,6 +47,7 @@ class Sudoku:
                 [self.__rows[x][y] for x in range(i, i + 3) for y in range(j, j + 3)]
             )
         self._speculation_depth = 0
+        self._max_speculation_depth = _max_speculation_depth
 
     @staticmethod
     def __leave_equal_alternatives(grid_view: list[list[Cell]]) -> bool:
@@ -79,7 +80,7 @@ class Sudoku:
                     break
         return is_any_cell_solved
 
-    def solve(self, speculation_depth=MAX_SPECULATION_DEPTH) -> None:
+    def solve(self) -> None:
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
@@ -102,7 +103,7 @@ class Sudoku:
                 logger.debug("Using Exclude Equal Alternatives method...")
                 for grid_view in [self.__rows, self.__columns, self.__squares]:
                     is_any_cell_solved |= self.__exclude_equal_alternatives(grid_view)
-            if not is_any_cell_solved and self._speculation_depth <= speculation_depth:
+            if not is_any_cell_solved and self._speculation_depth <= self._max_speculation_depth:
                 logger.debug("Using Exclude Violating Alternatives method...")
                 is_any_cell_solved |= self.__exclude_violating_alternative()
             if not is_any_cell_solved:
@@ -136,7 +137,7 @@ class Sudoku:
             if len(self.__rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
                 alternatives = sorted(self.__rows[i][j].alternatives)
                 while len(alternatives) > 0:
-                    sudoku_copy = Sudoku(self.get_grid())
+                    sudoku_copy = Sudoku(self.get_grid(), self._max_speculation_depth)
                     sudoku_copy._speculation_depth += 1
                     sudoku_copy.__rows[i][j].value = alternatives.pop()
                     try:
@@ -178,8 +179,8 @@ class Sudoku:
             j = index % 9
             true_cell_value = task[i][j]
             task[i][j] = None
-            sudoku = cls(task)
-            sudoku.solve(speculation_depth)
+            sudoku = cls(task, speculation_depth)
+            sudoku.solve()
             if not sudoku.is_solved:
                 task[i][j] = true_cell_value
         return task

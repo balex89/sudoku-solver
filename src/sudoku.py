@@ -75,8 +75,7 @@ class Sudoku:
                 if len(alternatives) == twin_alternatives_counter[alternatives]:
                     cell_indexes = [
                         index for index in range(9) if
-                        (not batch[index].is_solved and batch[index].alternatives != alternatives)
-                        ]
+                        (not batch[index].is_solved and batch[index].alternatives != alternatives)]
                     for index in cell_indexes:
                         batch[index].exclude(alternatives)
                         is_any_cell_solved |= batch[index].is_solved

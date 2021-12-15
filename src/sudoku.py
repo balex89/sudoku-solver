@@ -76,7 +76,7 @@ class Sudoku:
                     for index in [
                         index for index in range(9) if
                         not batch[index].is_solved and batch[index].alternatives != alternatives
-                                 ]:
+                    ]:
                         batch[index].exclude(alternatives)
                         is_any_cell_solved |= batch[index].is_solved
                     break

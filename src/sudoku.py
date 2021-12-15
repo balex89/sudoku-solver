@@ -73,10 +73,11 @@ class Sudoku:
             twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))
             for alternatives in twin_alternatives_counter:
                 if len(alternatives) == twin_alternatives_counter[alternatives]:
-                    for n in range(9):
-                        if not batch[n].is_solved and batch[n].alternatives != alternatives:
-                            batch[n].exclude(alternatives)
-                            is_any_cell_solved |= batch[n].is_solved
+                    cell_indexes = [index for index in range(9) if (not batch[index].is_solved and
+                                    batch[index].alternatives != alternatives)]
+                    for index in cell_indexes:
+                        batch[index].exclude(alternatives)
+                        is_any_cell_solved |= batch[index].is_solved
                     break
         return is_any_cell_solved
 

@@ -28,7 +28,8 @@ def _cell_from_alternatives(alternatives):
 
 
 def test_exclude_equal_alternatives():
-    EEA_1ST_ROW_ALTERNATIVES = [
+
+    _1st_row_alts = [
         {1, 2, 3, 4},
         {1, 2, 3, 4},
         {1, 2, 3, 4},
@@ -40,7 +41,7 @@ def test_exclude_equal_alternatives():
         {1, 2, 3, 4, 9, 7, 8}
     ]
 
-    EEA_1ST_ROW_ALTERNATIVES_SOLUTION = [
+    _1st_row_alts_solution = [
         {1, 2, 3, 4},
         {1, 2, 3, 4},
         {1, 2, 3, 4},
@@ -52,19 +53,32 @@ def test_exclude_equal_alternatives():
         {9, 7, 8}
     ]
 
-    grid_view = [
-        [
-            _cell_from_alternatives(EEA_1ST_ROW_ALTERNATIVES[i]) if j == 0 else Cell()
-            for i in range(9)
-        ]
-        for j in range(9)
+    _2nd_3rd_row_alts_solution = [
+        {1, 2, 3, 4, 5, 6, 7, 8, 9},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9},
+        {1, 2, 3, 4, 7, 8, 9},
+        {1, 2, 3, 4, 7, 8, 9},
+        {1, 2, 3, 4, 7, 8, 9},
+        {1, 2, 3, 4, 5, 6},
+        {1, 2, 3, 4, 5, 6},
+        {1, 2, 3, 4, 5, 6}
     ]
-    Sudoku._Sudoku__exclude_equal_alternatives(grid_view)
-    assert [cell._Cell__alternatives for cell in grid_view[0]] == EEA_1ST_ROW_ALTERNATIVES_SOLUTION
-    assert all(
-        grid_view[i][j]._Cell__alternatives == {1, 2, 3, 4, 5, 6, 7, 8, 9}
-        for j in range(9) for i in range(1, 9)
-    )
+
+    sud = Sudoku()
+    for cell, alts in zip(sud._rows[0], _1st_row_alts):
+        cell._alternatives = alts
+
+    sud._exclude_equal_alternatives()
+
+    assert ([cell._alternatives for cell in sud._rows[0]]
+            == _1st_row_alts_solution)
+    for i in (1, 2):
+        assert ([sud._rows[i][j]._alternatives for j in range(9)]
+                == _2nd_3rd_row_alts_solution)
+    for i in range(3, 9):
+        assert ([sud._rows[i][j]._alternatives for j in range(9)]
+                == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9)
 
 
 def test_sudoku_solver_hard_task_2():
@@ -79,8 +93,8 @@ def test_sudoku_solver_hard_task_3():
     assert s.get_grid() == HARD_TASK_SOLUTION_3
 
 
-def test_LEA():
-    LEA_1ST_ROW = [
+def test_leave_equal_alternatives():
+    _1st_row_alts = [
         {1, 2},
         {1, 2},
         {3, 4, 5, 7, 9},
@@ -92,7 +106,7 @@ def test_LEA():
         {3, 8}
     ]
 
-    LEA_1ST_ROW_SOLUTION = [
+    _1st_row_alts_solution = [
         {1, 2},
         {1, 2},
         {4, 7, 9},
@@ -104,20 +118,17 @@ def test_LEA():
         {3, 8}
     ]
 
-    grid_view = [
-        [
-            _cell_from_alternatives(LEA_1ST_ROW[i]) if (j == 0) else Cell()
-            for i in range(9)
-        ]
-        for j in range(9)
-    ]
-    Sudoku._Sudoku__leave_equal_alternatives(grid_view)
+    sud = Sudoku()
+    for cell, alts in zip(sud._rows[0], _1st_row_alts):
+        cell._alternatives = alts
 
-    assert [cell._Cell__alternatives for cell in grid_view[0]] == LEA_1ST_ROW_SOLUTION
-    assert all(
-        grid_view[i][j]._Cell__alternatives == {1, 2, 3, 4, 5, 6, 7, 8, 9}
-        for j in range(9) for i in range(1, 9)
-    )
+    sud._leave_equal_alternatives()
+
+    assert ([cell._alternatives for cell in sud._rows[0]]
+            == _1st_row_alts_solution)
+    for i in range(1, 9):
+        assert ([sud._rows[i][j]._alternatives for j in range(9)]
+                == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9)
 
 
 def test_sudoku_build_grid():

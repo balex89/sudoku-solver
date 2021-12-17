@@ -84,14 +84,3 @@ def draw_grid(grid: Grid, i: CellValue = None, j: CellValue = None):
         fillers = (">" if k == i * 9 + j else " " for k in range(81))
     values = (v if v is not None else " " for v in itertools.chain(*grid))
     return GRID_PATTERN.format(*itertools.chain(*zip(fillers, values)))
-
-
-def wrap_in_method(wrapper_method):
-    """
-    Decorates a [func]tion (defined on class level) by wrapping in [method] of that class
-    """
-    def wrapper(func):
-        def method(self):
-            return wrapper_method(self, func)
-        return method
-    return wrapper

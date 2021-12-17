@@ -3,9 +3,10 @@ from collections import Counter
 import random
 from typing import Sequence, Callable
 import logging
+from functools import partialmethod, partial
 
 from cell import Cell, CellStateException, ValueOutOfCellAlternativesException
-from utils import is_valid_grid, draw_grid, wrap_in_method
+from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ class Sudoku:
                 is_any_cell_solved |= batch_func(batch)
         return is_any_cell_solved
 
-    @wrap_in_method(_apply_batch_method)
+    @partial(partialmethod, _apply_batch_method)
     def _leave_equal_alternatives(batch: list[Cell]) -> bool:
         is_any_cell_solved = False
         list_of_alt_sets = [batch[j].alternatives for j in range(9)]
@@ -78,7 +79,7 @@ class Sudoku:
                 break
         return is_any_cell_solved
 
-    @wrap_in_method(_apply_batch_method)
+    @partial(partialmethod, _apply_batch_method)
     def _exclude_equal_alternatives(batch: list[Cell]) -> bool:
         is_any_cell_solved = False
         twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))

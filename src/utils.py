@@ -87,6 +87,9 @@ def draw_grid(grid: Grid, i: CellValue = None, j: CellValue = None):
 
 
 def wrap_in_method(wrapper_method):
+    """
+    Decorates a [func]tion (defined on class level) by wrapping in [method] of that class
+    """
     def wrapper(func):
         def method(self):
             return wrapper_method(self, func)

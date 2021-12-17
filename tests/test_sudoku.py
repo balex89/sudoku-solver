@@ -159,3 +159,32 @@ def test_valid_solution():
 def test_sudoku_get_task():
     random.seed(10)
     assert Sudoku.get_task(-1) == TASK_GRID
+
+
+def test_fix_error_empty_alternatives_before_solution():
+    TASK_GRID = [
+        [None, 2, None, None, None, None, None, 1, None],
+        [8, 6, 7, 1, None, None, None, None, 2],
+        [4, None, None, None, None, None, None, None, None],
+        [9, 3, None, None, 4, None, None, None, None],
+        [None, None, None, None, None, 8, None, None, 3],
+        [7, None, 8, 5, 9, None, 2, None, 4],
+        [None, None, None, 9, None, 4, None, 8, 5],
+        [None, None, 6, None, None, None, 1, None, None],
+        [None, None, None, None, 5, None, None, None, None]
+    ]
+    SOLUTION = [
+        [3, 2, 5, 4, 6, 9, 7, 1, 8],
+        [8, 6, 7, 1, 3, 5, 4, 9, 2],
+        [4, 9, 1, 8, 7, 2, 5, 3, 6],
+        [9, 3, 2, 7, 4, 6, 8, 5, 1],
+        [6, 5, 4, 2, 1, 8, 9, 7, 3],
+        [7, 1, 8, 5, 9, 3, 2, 6, 4],
+        [1, 7, 3, 9, 2, 4, 6, 8, 5],
+        [5, 4, 6, 3, 8, 7, 1, 2, 9],
+        [2, 8, 9, 6, 5, 1, 3, 4, 7]
+    ]
+
+    sudoku = Sudoku(TASK_GRID)
+    sudoku.solve()
+    assert sudoku.get_grid() == SOLUTION

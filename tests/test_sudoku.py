@@ -71,14 +71,13 @@ def test_exclude_equal_alternatives():
 
     sud._exclude_equal_alternatives()
 
-    assert ([cell._alternatives for cell in sud._rows[0]]
-            == _1st_row_alts_solution)
+    assert [cell._alternatives for cell in sud._rows[0]] == _1st_row_alts_solution
     for i in (1, 2):
-        assert ([sud._rows[i][j]._alternatives for j in range(9)]
-                == _2nd_3rd_row_alts_solution)
+        assert [sud._rows[i][j]._alternatives for j in range(9)] == _2nd_3rd_row_alts_solution
     for i in range(3, 9):
-        assert ([sud._rows[i][j]._alternatives for j in range(9)]
-                == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9)
+        assert (
+            [sud._rows[i][j]._alternatives for j in range(9)] == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9
+        )
 
 
 def test_sudoku_solver_hard_task_2():
@@ -124,11 +123,11 @@ def test_leave_equal_alternatives():
 
     sud._leave_equal_alternatives()
 
-    assert ([cell._alternatives for cell in sud._rows[0]]
-            == _1st_row_alts_solution)
+    assert ([cell._alternatives for cell in sud._rows[0]] == _1st_row_alts_solution)
     for i in range(1, 9):
-        assert ([sud._rows[i][j]._alternatives for j in range(9)]
-                == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9)
+        assert (
+            [sud._rows[i][j]._alternatives for j in range(9)] == [{1, 2, 3, 4, 5, 6, 7, 8, 9}] * 9
+        )
 
 
 def test_sudoku_build_grid():
@@ -162,7 +161,7 @@ def test_sudoku_get_task():
 
 
 def test_fix_error_empty_alternatives_before_solution():
-    TASK_GRID = [
+    task_grid = [
         [None, 2, None, None, None, None, None, 1, None],
         [8, 6, 7, 1, None, None, None, None, 2],
         [4, None, None, None, None, None, None, None, None],
@@ -173,7 +172,7 @@ def test_fix_error_empty_alternatives_before_solution():
         [None, None, 6, None, None, None, 1, None, None],
         [None, None, None, None, 5, None, None, None, None]
     ]
-    SOLUTION = [
+    solution = [
         [3, 2, 5, 4, 6, 9, 7, 1, 8],
         [8, 6, 7, 1, 3, 5, 4, 9, 2],
         [4, 9, 1, 8, 7, 2, 5, 3, 6],
@@ -185,6 +184,6 @@ def test_fix_error_empty_alternatives_before_solution():
         [2, 8, 9, 6, 5, 1, 3, 4, 7]
     ]
 
-    sudoku = Sudoku(TASK_GRID)
+    sudoku = Sudoku(task_grid)
     sudoku.solve()
-    assert sudoku.get_grid() == SOLUTION
+    assert sudoku.get_grid() == solution

@@ -15,6 +15,10 @@ EVA_MAX_ALTERNATIVES_NUMBER = 2
 MAX_SPECULATION_DEPTH = 4
 
 
+def _wrapped_in_method(method):
+    return partial(partialmethod, method)
+
+
 class InvalidSudokuException(Exception):
     pass
 
@@ -50,7 +54,7 @@ class Sudoku:
         self._speculation_depth = 0
         self._max_speculation_depth = _max_speculation_depth
 
-    def _apply_batch_method(self, batch_func: Callable[[list[Cell]], bool]) -> bool:
+    def _apply_batch_method(self, batch_func: Callable[[list[Cell]], bool], /) -> bool:
         logger.debug("Using %s method...", batch_func.__name__)
         is_any_cell_solved = False
         for grid_view in [self._rows, self._columns, self._squares]:
@@ -58,7 +62,7 @@ class Sudoku:
                 is_any_cell_solved |= batch_func(batch)
         return is_any_cell_solved
 
-    @partial(partialmethod, _apply_batch_method)
+    @_wrapped_in_method(_apply_batch_method)
     def _leave_equal_alternatives(batch: list[Cell]) -> bool:
         is_any_cell_solved = False
         list_of_alt_sets = [batch[j].alternatives for j in range(9)]
@@ -79,7 +83,7 @@ class Sudoku:
                 break
         return is_any_cell_solved
 
-    @partial(partialmethod, _apply_batch_method)
+    @_wrapped_in_method(_apply_batch_method)
     def _exclude_equal_alternatives(batch: list[Cell]) -> bool:
         is_any_cell_solved = False
         twin_alternatives_counter = Counter(batch[j].alternatives for j in range(9))
@@ -144,7 +148,7 @@ class Sudoku:
     def is_solved(self) -> bool:
         return all(self._rows[i][j].is_solved for i in range(9) for j in range(9))
 
-    def _exclude_violating_alternative(self):
+    def _exclude_violating_alternative(self) -> bool:
         if self._speculation_depth > self._max_speculation_depth:
             logger.debug("Skipping Exclude Violating Alternatives method...")
             return False

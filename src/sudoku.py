@@ -64,8 +64,6 @@ class Sudoku:
             self._leave_equal_alternatives_num += 1
         if batch_func.__name__ == "_exclude_equal_alternatives":
             self._exclude_equal_alternatives_num += 1
-        if batch_func.__name__ == "_exclude_violating_alternative":
-            self._exclude_violating_alternative_num += 1
         is_any_cell_solved = False
         for grid_view in [self._rows, self._columns, self._squares]:
             for batch in grid_view:
@@ -165,6 +163,7 @@ class Sudoku:
             logger.debug("Skipping Exclude Violating Alternatives method...")
             return False
         logger.debug("Using Exclude Violating Alternatives method...")
+        self._exclude_violating_alternative_num += 1
         for i, j in product(range(9), range(9)):
             if len(self._rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
                 alternatives = sorted(self._rows[i][j].alternatives)

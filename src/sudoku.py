@@ -112,25 +112,27 @@ class Sudoku:
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
-        try:
-            self._apply_basic_rules()
+        self._apply_basic_rules()
 
-            while True:
-                logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
-                if self._speculation_depth > 0 and not self._is_valid():
-                    raise InvalidSudokuException()
-                for method in (self._leave_equal_alternatives,
-                               self._exclude_equal_alternatives,
-                               self._exclude_violating_alternative):
+        while True:
+            logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
+            if self._speculation_depth > 0 and not self._is_valid():
+                raise InvalidSudokuException()
+            for method in (self._leave_equal_alternatives,
+                           self._exclude_equal_alternatives,
+                           self._exclude_violating_alternative):
+                try:
                     if method():
                         logger.debug("Some new cells are solved")
                         break
-                else:
-                    logger.debug("No cell was solved, stop iteration")
-                    break
-        except InvalidSudokuException:
-            if self._speculation_depth == 0:
-                raise ValueError("Sudoku has no correct solution")
+                except InvalidSudokuException:
+                    if (self._speculation_depth == 0):
+                        raise ValueError("Sudoku has no correct solution")
+                    else:
+                        raise InvalidSudokuException
+            else:
+                logger.debug("No cell was solved, stop iteration")
+                break
 
     def get_grid(self) -> Grid:
         return [[cell.value for cell in row] for row in self._rows]

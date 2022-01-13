@@ -31,6 +31,8 @@ class Sudoku:
             for cell in batch:
                 if not cell.is_solved:
                     cell.exclude(self._rows[i][j].value)
+        if not self._is_valid():
+            raise InvalidSudokuException
 
     def __init__(self, grid: Grid = None, _max_speculation_depth=MAX_SPECULATION_DEPTH) -> None:
 
@@ -110,21 +112,25 @@ class Sudoku:
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
-        self._apply_basic_rules()
+        try:
+            self._apply_basic_rules()
 
-        while True:
-            logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
-            if self._speculation_depth > 0 and not self._is_valid():
-                raise InvalidSudokuException()
-            for method in (self._leave_equal_alternatives,
-                           self._exclude_equal_alternatives,
-                           self._exclude_violating_alternative):
-                if method():
-                    logger.debug("Some new cells are solved")
+            while True:
+                logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
+                if self._speculation_depth > 0 and not self._is_valid():
+                    raise InvalidSudokuException()
+                for method in (self._leave_equal_alternatives,
+                               self._exclude_equal_alternatives,
+                               self._exclude_violating_alternative):
+                    if method():
+                        logger.debug("Some new cells are solved")
+                        break
+                else:
+                    logger.debug("No cell was solved, stop iteration")
                     break
-            else:
-                logger.debug("No cell was solved, stop iteration")
-                break
+        except InvalidSudokuException:
+            if self._speculation_depth == 0:
+                raise ValueError("Sudoku has no correct solution")
 
     def get_grid(self) -> Grid:
         return [[cell.value for cell in row] for row in self._rows]

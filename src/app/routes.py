@@ -3,7 +3,7 @@ import logging
 from flask import request, jsonify
 
 from app.main import app
-from sudoku import Sudoku
+from sudoku import InvalidSudokuException, Sudoku
 from utils import draw_grid
 
 logger = logging.getLogger(__name__)
@@ -56,3 +56,15 @@ def handle_bad_request(e):
 def handle_internal_error(e):
     logger.exception("Internal Server Error")
     return jsonify(status="error", error=str(e)), 500
+
+
+@app.errorhandler(Exception)
+def handle_internal_error(e):
+    logger.exception("Internal Server Error")
+    return jsonify(status="error", error=str(e)), 500
+
+
+@app.errorhandler(InvalidSudokuException)
+def handle_internal_error(e):
+    logger.exception("Bad request. Sudoku has no correct solution")
+    return jsonify(status="error", error="Sudoku has no correct solution"), 400

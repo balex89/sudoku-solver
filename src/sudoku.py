@@ -28,11 +28,11 @@ class Sudoku:
     def burn_alternatives(self, i, j):
 
         for batch in [self._rows[i], self._columns[j], self._get_square(i, j)]:
+            if not self._is_valid_cell_sequence(batch):
+                raise InvalidSudokuException
             for cell in batch:
                 if not cell.is_solved:
                     cell.exclude(self._rows[i][j].value)
-        if not self._is_valid():
-            raise InvalidSudokuException
 
     def __init__(self, grid: Grid = None, _max_speculation_depth=MAX_SPECULATION_DEPTH) -> None:
 
@@ -121,15 +121,9 @@ class Sudoku:
             for method in (self._leave_equal_alternatives,
                            self._exclude_equal_alternatives,
                            self._exclude_violating_alternative):
-                try:
-                    if method():
-                        logger.debug("Some new cells are solved")
-                        break
-                except InvalidSudokuException:
-                    if (self._speculation_depth == 0):
-                        raise ValueError("Sudoku has no correct solution")
-                    else:
-                        raise InvalidSudokuException
+                if method():
+                    logger.debug("Some new cells are solved")
+                    break
             else:
                 logger.debug("No cell was solved, stop iteration")
                 break

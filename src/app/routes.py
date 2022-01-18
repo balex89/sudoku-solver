@@ -58,13 +58,7 @@ def handle_internal_error(e):
     return jsonify(status="error", error=str(e)), 500
 
 
-@app.errorhandler(Exception)
-def handle_internal_error(e):
-    logger.exception("Internal Server Error")
-    return jsonify(status="error", error=str(e)), 500
-
-
 @app.errorhandler(InvalidSudokuException)
-def handle_internal_error(e):
+def handle_InvalidSudokuException(e):
     logger.exception("Bad request. Sudoku has no correct solution")
     return jsonify(status="error", error="Sudoku has no correct solution"), 400

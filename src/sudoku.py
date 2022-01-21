@@ -28,6 +28,8 @@ class Sudoku:
     def burn_alternatives(self, i, j):
 
         for batch in [self._rows[i], self._columns[j], self._get_square(i, j)]:
+            if not self._is_valid_cell_sequence(batch):
+                raise InvalidSudokuException
             for cell in batch:
                 if not cell.is_solved:
                     cell.exclude(self._rows[i][j].value)

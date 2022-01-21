@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from sudoku import Sudoku
+from sudoku import InvalidSudokuException, Sudoku
 from cell import Cell
 from resources import (EASY_TASK, EASY_SOLUTION, HARD_TASK, HARD_SOLUTION,
                        HARD_TASK_2, HARD_TASK_SOLUTION_2, HARD_TASK_3,
@@ -190,7 +190,6 @@ def test_fix_error_empty_alternatives_before_solution():
     assert sudoku.get_grid() == solution
 
 
-@pytest.mark.xfail
 def test_non_valid_task():
     task_grid = [
         [_, _, _, 4, 3, _, 9, 5, 6],
@@ -205,5 +204,5 @@ def test_non_valid_task():
     ]
 
     sudoku = Sudoku(task_grid)
-    sudoku.solve()
-    assert sudoku.is_solved
+    with pytest.raises(InvalidSudokuException):
+        sudoku.solve()

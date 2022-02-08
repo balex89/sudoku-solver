@@ -28,9 +28,13 @@ class Sudoku:
     def burn_alternatives(self, i, j):
 
         for batch in [self._rows[i], self._columns[j], self._get_square(i, j)]:
+            if not self._is_valid_cell_sequence(batch):
+                raise InvalidSudokuException
             for cell in batch:
                 if not cell.is_solved:
                     cell.exclude(self._rows[i][j].value)
+                    if cell.is_solved:
+                        self._burn_alternatives_solved += 1
 
     def __init__(self, grid: Grid = None, _max_speculation_depth=MAX_SPECULATION_DEPTH) -> None:
 
@@ -54,20 +58,30 @@ class Sudoku:
         self._speculation_depth = 0
         self._max_speculation_depth = _max_speculation_depth
         self.rounds = 0
-        self._leave_equal_alternatives_num = 0
-        self._exclude_equal_alternatives_num = 0
-        self._exclude_violating_alternative_num = 0
+        self._leave_equal_alternatives_call = 0
+        self._exclude_equal_alternatives_call = 0
+        self._exclude_violating_alternative_call = 0
+        self._leave_equal_alternatives_solved = 0
+        self._exclude_equal_alternatives_solved = 0
+        self._exclude_violating_alternative_solved = 0
+        self._basic_rules_solved = 0
+        self._burn_alternatives_solved = 0
 
     def _apply_batch_method(self, batch_func: Callable[[list[Cell]], bool], /) -> bool:
         logger.debug("Using %s method...", batch_func.__name__)
         if batch_func.__name__ == "_leave_equal_alternatives":
-            self._leave_equal_alternatives_num += 1
+            self._leave_equal_alternatives_call += 1
         if batch_func.__name__ == "_exclude_equal_alternatives":
-            self._exclude_equal_alternatives_num += 1
+            self._exclude_equal_alternatives_call += 1
         is_any_cell_solved = False
         for grid_view in [self._rows, self._columns, self._squares]:
             for batch in grid_view:
-                is_any_cell_solved |= batch_func(batch)
+                result = batch_func(batch)
+                if result and batch_func.__name__ == "_leave_equal_alternatives":
+                    self._leave_equal_alternatives_solved += 1
+                if result and batch_func.__name__ == "_exclude_equal_alternatives":
+                    self._exclude_equal_alternatives_solved += 1
+                is_any_cell_solved |= result
         return is_any_cell_solved
 
     @_wrapped_in_method(_apply_batch_method)
@@ -113,6 +127,8 @@ class Sudoku:
                 self._rows[i][j].exclude(self._rows[i])
                 self._rows[i][j].exclude(self._columns[j])
                 self._rows[i][j].exclude(self._get_square(i, j))
+                if self._rows[i][j].is_solved:
+                    self._basic_rules_solved += 1
 
     def solve(self) -> None:
 
@@ -129,6 +145,7 @@ class Sudoku:
             for method in (self._leave_equal_alternatives,
                            self._exclude_equal_alternatives,
                            self._exclude_violating_alternative):
+               
                 if method():
                     logger.debug("Some new cells are solved")
                     break
@@ -163,7 +180,7 @@ class Sudoku:
             logger.debug("Skipping Exclude Violating Alternatives method...")
             return False
         logger.debug("Using Exclude Violating Alternatives method...")
-        self._exclude_violating_alternative_num += 1
+        self._exclude_violating_alternative_call += 1
         for i, j in product(range(9), range(9)):
             if len(self._rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
                 alternatives = sorted(self._rows[i][j].alternatives)
@@ -175,6 +192,7 @@ class Sudoku:
                         sudoku_copy.solve()
                     except (InvalidSudokuException, CellStateException):
                         self._rows[i][j].exclude(sudoku_copy._rows[i][j].value)
+                        self._exclude_violating_alternative_solved += 1
                         return True
         return False
 

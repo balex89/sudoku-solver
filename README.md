@@ -75,6 +75,21 @@ Normal response data is JSON:
 {"status": "ok", "grid": <UPDATED_GRID>}
 ```
 
+### Get (pretty hard) Sudoku puzzle
+```shell
+curl -X GET http://<host>:<port>/v1/get_task -H "Accept:application/json"
+```
+
+Example:
+```shell
+curl -X GET http://localhost:5000/v1/get_task -H "Accept:application/json"
+```
+
+Normal response data is JSON:
+```
+{"status": "ok", "grid": <PUZZLE_GRID>}
+```
+
 ## Local usage (via a file)
 Encode sudoku puzzle to text file (see [format requirements](#sudoku-file-format-requirements)) and pass it to the script: 
 ```shell
@@ -115,4 +130,6 @@ Development is in progress.
 - [@KalinovSergey](https://github.com/KalinovSergey)
 - [@JanPyton](https://github.com/JanPyton)
 
-_Lead maintainer:_ [@balex89](https://github.com/balex89) ([balex89@gmail.com](mailto:balex89@gmail.com)). Feel free to contact!
+_Lead maintainer:_ [@balex89](https://github.com/balex89) 
+
+Feel free to contact us: team@kalinbob.com

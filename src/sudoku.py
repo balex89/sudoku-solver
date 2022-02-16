@@ -145,7 +145,7 @@ class Sudoku:
             for method in (self._leave_equal_alternatives,
                            self._exclude_equal_alternatives,
                            self._exclude_violating_alternative):
-               
+
                 if method():
                     logger.debug("Some new cells are solved")
                     break
@@ -221,15 +221,22 @@ class Sudoku:
         return sudokus[9].get_grid()
 
     @classmethod
-    def get_task(cls, speculation_depth):
-        task = cls.build_grid()
-        for index in random.sample(range(81), 81):
-            i: int = index // 9
-            j: int = index % 9
-            true_cell_value = task[i][j]
-            task[i][j] = None
+    def get_task(cls, speculation_depth, min_difficult=0, max_difficult=81):
+        while True:
+            task = cls.build_grid()
+            for index in random.sample(range(81), 81):
+                i: int = index // 9
+                j: int = index % 9
+                true_cell_value = task[i][j]
+                task[i][j] = None
+                sudoku = cls(task, speculation_depth)
+                sudoku.solve()
+                if (not sudoku.is_solved) or (sudoku._leave_equal_alternatives_solved +
+                   sudoku._exclude_equal_alternatives_solved > max_difficult):
+                    task[i][j] = true_cell_value
             sudoku = cls(task, speculation_depth)
             sudoku.solve()
-            if not sudoku.is_solved:
-                task[i][j] = true_cell_value
+            if (sudoku._leave_equal_alternatives_solved +
+               sudoku._exclude_equal_alternatives_solved >= min_difficult):
+                break
         return task

@@ -161,6 +161,14 @@ def test_sudoku_get_task():
     assert Sudoku.get_task(-1) == TASK_GRID
 
 
+def test_sudoku_get_task_definite_difficulty():
+    random.seed(10)
+    sudoku = Sudoku(Sudoku.get_task(-1, 3, 5))
+    sudoku.solve()
+    assert (sudoku._counter[sudoku._leave_equal_alternatives].solved +
+            sudoku._counter[sudoku._exclude_equal_alternatives].solved) == 4
+
+
 def test_fix_error_empty_alternatives_before_solution():
     task_grid = [
         [None, 2, None, None, None, None, None, 1, None],

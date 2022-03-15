@@ -4,8 +4,8 @@ import random
 from typing import Sequence, Callable
 import logging
 from functools import partialmethod, partial
-from counter import _Counter
 
+from counter import _Counter
 from cell import Cell, CellStateException, ValueOutOfCellAlternativesException
 from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
@@ -57,7 +57,6 @@ class Sudoku:
             )
         self._speculation_depth = 0
         self._max_speculation_depth = _max_speculation_depth
-        self.rounds = 0
         self._counter = _Counter()
 
     def _apply_batch_method(self, batch_func: Callable[[list[Cell]], bool], /) -> bool:
@@ -124,7 +123,6 @@ class Sudoku:
         self._apply_basic_rules()
 
         while True:
-            self.rounds += self.rounds
             logger.debug("New iteration. Current sudoku status: %s", draw_grid(self.get_grid()))
             if self._speculation_depth > 0 and not self._is_valid():
                 raise InvalidSudokuException()
@@ -217,12 +215,16 @@ class Sudoku:
                 task[i][j] = None
                 sudoku = cls(task, speculation_depth)
                 sudoku.solve()
-                if not sudoku.is_solved or (sudoku._counter[sudoku._leave_equal_alternatives].solved
-                   + sudoku._counter[sudoku._exclude_equal_alternatives].solved) > max_difficulty:
+                if not sudoku.is_solved or (
+                    sudoku._counter[sudoku._leave_equal_alternatives].solved
+                   + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+                   ) > max_difficulty:
                     task[i][j] = true_cell_value
             sudoku = cls(task, speculation_depth)
             sudoku.solve()
-            if (sudoku._counter[sudoku._leave_equal_alternatives].solved +
-               sudoku._counter[sudoku._exclude_equal_alternatives].solved >= min_difficulty):
+            if (
+                sudoku._counter[sudoku._leave_equal_alternatives].solved
+               + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+               ) >= min_difficulty:
                 break
         return task

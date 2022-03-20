@@ -5,6 +5,7 @@ from typing import Sequence, Callable
 import logging
 from functools import partialmethod, partial
 
+from counter import _Counter
 from cell import Cell, CellStateException, ValueOutOfCellAlternativesException
 from utils import is_valid_grid, draw_grid
 from type_aliases import Grid
@@ -33,6 +34,7 @@ class Sudoku:
             for cell in batch:
                 if not cell.is_solved:
                     cell.exclude(self._rows[i][j].value)
+                    self._counter[self.burn_alternatives].solved += cell.is_solved
 
     def __init__(self, grid: Grid = None, _max_speculation_depth=MAX_SPECULATION_DEPTH) -> None:
 
@@ -55,13 +57,17 @@ class Sudoku:
             )
         self._speculation_depth = 0
         self._max_speculation_depth = _max_speculation_depth
+        self._counter = _Counter()
 
     def _apply_batch_method(self, batch_func: Callable[[list[Cell]], bool], /) -> bool:
         logger.debug("Using %s method...", batch_func.__name__)
+        self._counter[batch_func].called += 1
         is_any_cell_solved = False
         for grid_view in [self._rows, self._columns, self._squares]:
             for batch in grid_view:
-                is_any_cell_solved |= batch_func(batch)
+                result = batch_func(batch)
+                self._counter[batch_func].solved += result
+                is_any_cell_solved |= result
         return is_any_cell_solved
 
     @_wrapped_in_method(_apply_batch_method)
@@ -107,8 +113,10 @@ class Sudoku:
                 self._rows[i][j].exclude(self._rows[i])
                 self._rows[i][j].exclude(self._columns[j])
                 self._rows[i][j].exclude(self._get_square(i, j))
+                self._counter[self._apply_basic_rules].solved += self._rows[i][j].is_solved
 
     def solve(self) -> None:
+
         if not self._is_valid():
             raise ValueError('Sudoku rules are violated')
 
@@ -121,6 +129,7 @@ class Sudoku:
             for method in (self._leave_equal_alternatives,
                            self._exclude_equal_alternatives,
                            self._exclude_violating_alternative):
+
                 if method():
                     logger.debug("Some new cells are solved")
                     break
@@ -155,6 +164,7 @@ class Sudoku:
             logger.debug("Skipping Exclude Violating Alternatives method...")
             return False
         logger.debug("Using Exclude Violating Alternatives method...")
+        self._counter[self._exclude_violating_alternative].called += 1
         for i, j in product(range(9), range(9)):
             if len(self._rows[i][j].alternatives) <= EVA_MAX_ALTERNATIVES_NUMBER:
                 alternatives = sorted(self._rows[i][j].alternatives)
@@ -166,6 +176,7 @@ class Sudoku:
                         sudoku_copy.solve()
                     except (InvalidSudokuException, CellStateException):
                         self._rows[i][j].exclude(sudoku_copy._rows[i][j].value)
+                        self._counter[self._exclude_violating_alternative].solved += 1
                         return True
         return False
 
@@ -194,15 +205,26 @@ class Sudoku:
         return sudokus[9].get_grid()
 
     @classmethod
-    def get_task(cls, speculation_depth):
-        task = cls.build_grid()
-        for index in random.sample(range(81), 81):
-            i: int = index // 9
-            j: int = index % 9
-            true_cell_value = task[i][j]
-            task[i][j] = None
+    def get_task(cls, speculation_depth, min_difficulty=0, max_difficulty=81):
+        while True:
+            task = cls.build_grid()
+            for index in random.sample(range(81), 81):
+                i: int = index // 9
+                j: int = index % 9
+                true_cell_value = task[i][j]
+                task[i][j] = None
+                sudoku = cls(task, speculation_depth)
+                sudoku.solve()
+                if not sudoku.is_solved or (
+                    sudoku._counter[sudoku._leave_equal_alternatives].solved
+                    + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+                ) > max_difficulty:
+                    task[i][j] = true_cell_value
             sudoku = cls(task, speculation_depth)
             sudoku.solve()
-            if not sudoku.is_solved:
-                task[i][j] = true_cell_value
+            if (
+                sudoku._counter[sudoku._leave_equal_alternatives].solved
+                + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+            ) >= min_difficulty:
+                break
         return task

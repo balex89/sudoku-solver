@@ -217,14 +217,14 @@ class Sudoku:
                 sudoku.solve()
                 if not sudoku.is_solved or (
                     sudoku._counter[sudoku._leave_equal_alternatives].solved
-                   + sudoku._counter[sudoku._exclude_equal_alternatives].solved
-                   ) > max_difficulty:
+                    + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+                ) > max_difficulty:
                     task[i][j] = true_cell_value
             sudoku = cls(task, speculation_depth)
             sudoku.solve()
             if (
                 sudoku._counter[sudoku._leave_equal_alternatives].solved
-               + sudoku._counter[sudoku._exclude_equal_alternatives].solved
-               ) >= min_difficulty:
+                + sudoku._counter[sudoku._exclude_equal_alternatives].solved
+            ) >= min_difficulty:
                 break
         return task

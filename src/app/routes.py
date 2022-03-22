@@ -37,7 +37,7 @@ def solve():
     return jsonify(status="ok", grid=solution)
 
 
-@app.route("/v1/task", methods=["GET"])
+@app.route("/v1/get_task", methods=["GET"])
 def get_task():
     logger.info("Generating task...")
     task = Sudoku.get_task(-1)
@@ -46,11 +46,11 @@ def get_task():
     return jsonify(status="ok", grid=task)
 
 
-@app.route("/v1/task_difficulty", methods=["GET"])
+@app.route("/v1/task", methods=["GET"])
 def get_task_difficulty():
     logger.info("Generating task...")
-    min_difficulty = request.json.get("min_difficulty")
-    max_difficulty = request.json.get("max_difficulty")
+    min_difficulty = int(request.args["min_difficulty"])
+    max_difficulty = int(request.args["max_difficulty"])
 
     task = Sudoku.get_task(-1, min_difficulty, max_difficulty)
     logger.info("Task generated!")

@@ -37,7 +37,7 @@ def test_get_task(client):
     assert response.json.get("grid") == TASK_GRID
 
 
-def test_get_task_with_difficulty(client):
+def test_get_custom_task(client):
     random.seed(10)
     mimetype = "application/json"
     headers = {

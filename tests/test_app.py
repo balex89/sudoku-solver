@@ -1,7 +1,7 @@
 import json
 import random
 
-from resources import EASY_TASK, EASY_SOLUTION, TASK_GRID, INVALID_TASK
+from resources import EASY_TASK, EASY_SOLUTION, TASK_GRID, INVALID_TASK, TASK_GRID_WITH_DIFFICULTY
 
 
 def test_health(client):
@@ -35,6 +35,21 @@ def test_get_task(client):
     assert response.status_code == 200
     assert response.mimetype == mimetype
     assert response.json.get("grid") == TASK_GRID
+
+
+def test_get_custom_task(client):
+    random.seed(10)
+    mimetype = "application/json"
+    headers = {
+        "Content-Type": mimetype,
+        "Accept": mimetype
+    }
+    query_string = {"min_difficulty": 1, "max_difficulty": 3}
+    response = client.get(path="/v1/task", query_string=query_string, headers=headers)
+
+    assert response.status_code == 200
+    assert response.mimetype == mimetype
+    assert response.json.get("grid") == TASK_GRID_WITH_DIFFICULTY
 
 
 def test_solve_with_InvalidSudokuException(client):

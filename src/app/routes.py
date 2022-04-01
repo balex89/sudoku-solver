@@ -46,6 +46,19 @@ def get_task():
     return jsonify(status="ok", grid=task)
 
 
+@app.route("/v1/task", methods=["GET"])
+def get_custom_task():
+
+    min_difficulty = int(request.args.get("min_difficulty", "0"))
+    max_difficulty = int(request.args.get("max_difficulty", "81"))
+    logger.info("Generating task with min_difficulty = %s, max_difficulty = %s",
+                min_difficulty, max_difficulty)
+    task = Sudoku.get_task(-1, min_difficulty, max_difficulty)
+    logger.info("Task generated!")
+    logger.info("Returning task: %s", draw_grid(task))
+    return jsonify(status="ok", grid=task)
+
+
 @app.errorhandler(400)
 def handle_bad_request(e):
     logger.exception("Bad request")
